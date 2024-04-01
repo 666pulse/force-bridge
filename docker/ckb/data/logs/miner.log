@@ -1,4 +1,0 @@
-2024-04-01 02:49:25.923 +00:00 main INFO sentry  sentry is disabled
-2024-04-01 02:49:25.934 +00:00 main INFO ckb_memory_tracker::process  track current process: disable
-2024-04-01 02:49:25.934 +00:00 main INFO ckb_miner::client  loop poll mode: interval 1000ms
-2024-04-01 02:49:25.934 +00:00 main INFO ckb_stop_handler::stop_register  Waiting exit signal...

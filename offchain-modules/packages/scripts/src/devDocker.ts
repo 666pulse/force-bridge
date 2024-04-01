@@ -4,12 +4,13 @@ import { KeyStore } from '@force-bridge/keystore/dist';
 import { nonNullable } from '@force-bridge/x';
 import { OwnerCellConfig } from '@force-bridge/x/dist/ckb/tx-helper/deploy';
 import { Config, WhiteListEthAsset, CkbDeps } from '@force-bridge/x/dist/config';
-import { privateKeyToCkbPubkeyHash, writeJsonToFile } from '@force-bridge/x/dist/utils';
+import { privateKeyToCkbPubkeyHash,privateKeyToCkbAddress, writeJsonToFile } from '@force-bridge/x/dist/utils';
 import { logger, initLog } from '@force-bridge/x/dist/utils/logger';
 import * as lodash from 'lodash';
 import * as Mustache from 'mustache';
 import { pathFromProjectRoot } from './utils';
 import { deployDev } from './utils/deploy';
+
 
 export interface VerifierConfig {
   privkey: string;
@@ -259,15 +260,21 @@ async function main() {
   initLog({ level: 'debug', identity: 'dev-docker' });
   // used for deploy and run service
   const ETH_PRIVATE_KEY = '0xc4ad657963930fbff2e9de3404b30a4e21432c89952ed430b56bf802945ed37a';
-  const CKB_PRIVATE_KEY = '0xa800c82df5461756ae99b5c6677d019c98cc98c7786b80d7b2e77256e46ea1fe';
+  const CKB_PRIVATE_KEY = '0x3bc65932a75f76c5b6a04660e4d0b85c2d9b5114efa78e6e5cf7ad0588ca09c8';
+
+
+  console.log("CKB_PRIVATE_KEY ======> ",CKB_PRIVATE_KEY)
+  console.log("privateKeyToCkbAddress(CKB_PRIVATE_KEY) ========> ",privateKeyToCkbAddress(CKB_PRIVATE_KEY))
+  console.log("privateKeyToCkbPubkeyHash(CKB_PRIVATE_KEY) ========> ",privateKeyToCkbPubkeyHash(CKB_PRIVATE_KEY))
+
 
   const MULTISIG_NUMBER = 1;
   const MULTISIG_THRESHOLD = 1;
   const FORCE_BRIDGE_KEYSTORE_PASSWORD = '123456';
   // connect to docker network: docker_force-dev-net
   const ETH_RPC_URL = 'http://127.0.0.1:8545';
-  const CKB_RPC_URL = 'http://127.0.0.1:8114/rpc';
-  const CKB_INDEXER_URL = 'http://127.0.0.1:8114/indexer';
+  const CKB_RPC_URL = 'https://testnet.ckb.dev/rpc';
+  const CKB_INDEXER_URL = 'https://testnet.ckb.dev/indexer';
 
   const configPath = pathFromProjectRoot('tmp/dev-docker');
   console.log('configPath: ', configPath);
@@ -356,7 +363,4 @@ async function main() {
   fs.writeFileSync(path.join(configPath, 'docker-compose.yml'), dockerComposeFile);
 }
 
-main().then(() => process.exit(0)).catch((error) => {
-  logger.error(`dev docker generate failed, error: ${error.stack}`);
-  process.exit(1);
-});
+main()

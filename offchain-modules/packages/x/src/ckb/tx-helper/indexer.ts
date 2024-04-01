@@ -53,15 +53,15 @@ export interface GetLiveCellsResult {
 }
 
 export interface IndexerCell {
-  block_number: Hexadecimal;
-  out_point: OutPoint;
+  blockNumber: Hexadecimal;
+  outPoint: OutPoint;
   output: {
     capacity: HexNumber;
     lock: Script;
     type?: Script;
   };
-  output_data: HexString;
-  tx_index: Hexadecimal;
+  outputData: HexString;
+  txIndex: Hexadecimal;
 }
 
 export interface TerminatorResult {
@@ -117,7 +117,7 @@ export class CkbIndexer {
     while (true) {
       const t = await this.tip()
       console.log(t)
-      const indexerTipNumber = parseInt((await this.tip()).block_number, 16);
+      const indexerTipNumber = parseInt((await this.tip()).blockNumber, 16);
       logger.debug('indexerTipNumber', indexerTipNumber);
       if (indexerTipNumber + blockDifference >= rpcTipNumber) {
         return;
@@ -210,8 +210,9 @@ export class CkbIndexer {
       method,
       params,
     };
-    console.log('indexer request', data);
+    console.log('indexer request', JSON.stringify(data));
     console.log('indexer request ckbIndexerUrl', ckbIndexerUrl);
+
     const res = await axios.post(ckbIndexerUrl, data);
     if (res.status !== 200) {
       throw new Error(`indexer request failed with HTTP code ${res.status}`);
@@ -219,7 +220,11 @@ export class CkbIndexer {
     if (res.data.error !== undefined) {
       throw new Error(`indexer request rpc failed with error: ${JSON.stringify(res.data.error)}`);
     }
-    return res.data.result;
+    let rdata = JSON.parse(JSON.stringify(res.data.result))
+    console.log(res.data.result)
+    toCamel(rdata)
+    console.log(rdata)
+    return rdata;
   }
 
   /* get_cells example
@@ -307,13 +312,13 @@ $ echo '{
       const res: GetLiveCellsResult = await this.request('get_cells', params);
       const liveCells = res.objects;
       cursor = res.last_cursor;
-      logger.debug('liveCells', liveCells[liveCells.length - 1]);
+      logger.debug('liveCells', liveCells);
       for (const liveCell of liveCells) {
         const cell: Cell = {
           cellOutput: liveCell.output,
-          data: liveCell.output_data,
-          outPoint: liveCell.out_point,
-          blockNumber: liveCell.block_number,
+          data: liveCell.outputData,
+          outPoint: liveCell.outPoint,
+          blockNumber: liveCell.blockNumber,
         };
         const { stop, push } = terminator(index, cell);
         if (push) {
@@ -377,4 +382,28 @@ $ echo '{
   subscribeMedianTime(): NodeJS.EventEmitter {
     throw new Error('unimplemented');
   }
+}
+
+
+function toCamel(obj) {
+  if (obj instanceof Array) {
+    obj.forEach(function(v, i) {
+      toCamel(v)
+    })
+  } else if (obj instanceof Object) {
+    Object.keys(obj).forEach(function(key) {
+      var newKey = underline2Hump(key)
+      if (newKey !== key) {
+        obj[newKey] = obj[key]
+        delete obj[key]
+      }
+      toCamel(obj[newKey])
+    })
+  }
+}
+
+function underline2Hump(s) {
+  return s.replace(/_(\w)/g, function(all, letter) {
+    return letter.toUpperCase()
+  })
 }

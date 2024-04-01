@@ -18,14 +18,12 @@ function toBigUInt64LE(num) {
 }
 
 function generateTypeID(input, outputIndex) {
-
   // const s = core.SerializeCellInput(normalizers.NormalizeCellInput(input));
   // const i = toBigUInt64LE(outputIndex);
   // const ckbHasher = new utils.CKBHasher();
   // ckbHasher.update(s);
   // ckbHasher.update(i);
   // return ckbHasher.digestHex();
-
   const outPointBuf = blockchain.CellInput.pack(input);
   const outputIndexBuf = bytes.hexify(number.Uint64LE.pack(outputIndex));
   const ckbHasher = new utils.CKBHasher();
@@ -42,3 +40,10 @@ export function generateTypeIDScript(input, outputIndex) {
     args,
   };
 }
+
+// function SerializeCellInput(value) {
+//   const array = new Uint8Array(0 + Uint64.size() + OutPoint.size());
+//   array.set(new Uint8Array(SerializeUint64(value.since)), 0);
+//   array.set(new Uint8Array(SerializeOutPoint(value.previous_output)), 0 + Uint64.size());
+//   return array.buffer;
+// }

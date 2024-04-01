@@ -54,6 +54,7 @@ export async function deployDev(
     MULTISIG_THRESHOLD,
   );
   logger.info(`bridge address: ${bridgeEthAddress}`);
+
   const ckbDeployGenerator = new CkbDeployManager(CKB_RPC_URL, CKB_INDEXER_URL);
   if (!ckbDeps) {
     // deploy ckb contracts
@@ -61,19 +62,19 @@ export async function deployDev(
     let pwLockDep;
     let PATH_BRIDGE_LOCKSCRIPT;
     let PATH_RECIPIENT_TYPESCRIPT;
-    if (env === 'DEV') {
-      PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-devnet/recipient-typescript');
-      PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-devnet/bridge-lockscript');
-      const PATH_SUDT_DEP = pathFromProjectRoot('/offchain-modules/deps/simple_udt');
-      const PATH_PW_LOCK_DEP = pathFromProjectRoot('/offchain-modules/deps/pw_lock');
-      const sudtBin = fs.readFileSync(PATH_SUDT_DEP);
-      const pwLockBin = fs.readFileSync(PATH_PW_LOCK_DEP);
-      sudtDep = await ckbDeployGenerator.deploySudt(sudtBin, ckbPrivateKey);
-      pwLockDep = await ckbDeployGenerator.deployContract(pwLockBin, ckbPrivateKey);
-      logger.info('deployed pwLockDep', JSON.stringify(pwLockDep, null, 2));
-    } else if (env === 'AGGRON4') {
-      PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-aggron/recipient-typescript');
-      PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-aggron/bridge-lockscript');
+    // if (env === 'DEV') {
+    //   PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-devnet/recipient-typescript');
+    //   PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release-devnet/bridge-lockscript');
+    //   const PATH_SUDT_DEP = pathFromProjectRoot('/offchain-modules/deps/simple_udt');
+    //   const PATH_PW_LOCK_DEP = pathFromProjectRoot('/offchain-modules/deps/pw_lock');
+    //   const sudtBin = fs.readFileSync(PATH_SUDT_DEP);
+    //   const pwLockBin = fs.readFileSync(PATH_PW_LOCK_DEP);
+    //   sudtDep = await ckbDeployGenerator.deploySudt(sudtBin, ckbPrivateKey);
+    //   pwLockDep = await ckbDeployGenerator.deployContract(pwLockBin, ckbPrivateKey);
+    //   logger.info('deployed pwLockDep', JSON.stringify(pwLockDep, null, 2));
+    // } else if (env === 'AGGRON4') {
+      PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/recipient-typescript');
+      PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/bridge-lockscript');
       sudtDep = {
         cellDep: {
           depType: 'code',
@@ -100,9 +101,9 @@ export async function deployDev(
           hashType: 'type',
         },
       };
-    } else {
-      throw new Error(`wrong env: ${env}`);
-    }
+    // } else {
+    //   throw new Error(`wrong env: ${env}`);
+    // }
     const contractsDeps = await ckbDeployGenerator.deployContracts(
       {
         bridgeLockscript: fs.readFileSync(PATH_BRIDGE_LOCKSCRIPT),

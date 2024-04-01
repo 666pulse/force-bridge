@@ -209,7 +209,7 @@
     "@babel/helper-validator-identifier" "^7.22.20"
     to-fast-properties "^2.0.0"
 
-"@ckb-lumos/base@0.22.0-next.5", "@ckb-lumos/base@^0.22.0-next.3":
+"@ckb-lumos/base@0.22.0-next.5", "@ckb-lumos/base@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/base/-/base-0.22.0-next.5.tgz#600a1b9c6b481b6ce40772a1a32aa668522c994e"
   integrity sha512-2I4f/zJm3Bdz/5soXo35vDh98Vffp2clO8n1ZeZRsUtBZUtvAGNbggC4J8/0a/yFw3cStaOJ1Tztla5E0hP+xA==
@@ -250,7 +250,7 @@
   dependencies:
     "@ckb-lumos/bi" "0.22.0-next.5"
 
-"@ckb-lumos/common-scripts@0.22.0-next.5", "@ckb-lumos/common-scripts@^0.22.0-next.3":
+"@ckb-lumos/common-scripts@0.22.0-next.5", "@ckb-lumos/common-scripts@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/common-scripts/-/common-scripts-0.22.0-next.5.tgz#3151331b24867b198d99e236bbfc976aa8a67bd4"
   integrity sha512-DXGwyc0pmrq0fj+NflDBeBgJSL2bNAVHpULpbUncDUPIBJf9IFyMDSZUgzX6hYjTX0WA07e5CEFo5wwHb24Dmw==
@@ -278,7 +278,7 @@
     "@types/deep-freeze-strict" "^1.1.0"
     deep-freeze-strict "^1.1.1"
 
-"@ckb-lumos/hd@0.22.0-next.5", "@ckb-lumos/hd@^0.22.0-next.3":
+"@ckb-lumos/hd@0.22.0-next.5", "@ckb-lumos/hd@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/hd/-/hd-0.22.0-next.5.tgz#eb47b596a7d964826a4e3f6dccfde3abea3f345c"
   integrity sha512-d+Ws/fknuh+P9+aEBhLWiCOxMVE6i78T+2bEj8aWDLoVfrLvuCqFEyVRCspOG22pgEj0h853nMsetrb4pI+fdw==
@@ -291,7 +291,7 @@
     sha3 "^2.1.3"
     uuid "^8.3.0"
 
-"@ckb-lumos/helpers@0.22.0-next.5", "@ckb-lumos/helpers@^0.22.0-next.3":
+"@ckb-lumos/helpers@0.22.0-next.5", "@ckb-lumos/helpers@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/helpers/-/helpers-0.22.0-next.5.tgz#feb902951f64e7f35fbf57a9b90f3884ce0ab586"
   integrity sha512-fsPr7oTQuKdfEvqdakgfDv9daU4PLPc9g8l13klMhEayaTamBndG3GdhTTASFMBxQaz58E6thTObsig220yVIg==
@@ -315,7 +315,7 @@
     cross-fetch "^3.1.5"
     events "^3.3.0"
 
-"@ckb-lumos/lumos@^0.22.0-next.3":
+"@ckb-lumos/lumos@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/lumos/-/lumos-0.22.0-next.5.tgz#689513d2743235b047cdb395934777de2690d9cb"
   integrity sha512-Dv+MKa664zsD9Nxrnor04Hb52MNcwgtEutgzdlE+qtAB/skp6P0NVnU9uQF7RiYHNpdmUe8PROlkzB4jaKz9NA==
@@ -333,7 +333,7 @@
     "@ckb-lumos/toolkit" "0.22.0-next.5"
     "@ckb-lumos/transaction-manager" "0.22.0-next.5"
 
-"@ckb-lumos/rpc@0.22.0-next.5", "@ckb-lumos/rpc@^0.22.0-next.3":
+"@ckb-lumos/rpc@0.22.0-next.5", "@ckb-lumos/rpc@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/rpc/-/rpc-0.22.0-next.5.tgz#7b3de0738cb02a06ff87ffd33abde0742ec68fc2"
   integrity sha512-ohH5kj/iiyKaTksgWCc4STwnEON9cCC2tPf3eP7XUaJ9ZO01ahOZ9C85NccBoK2lOqcLrZag3Y0LDQWw+eFbBg==
@@ -350,7 +350,7 @@
   dependencies:
     "@ckb-lumos/bi" "0.22.0-next.5"
 
-"@ckb-lumos/transaction-manager@0.22.0-next.5", "@ckb-lumos/transaction-manager@^0.22.0-next.3":
+"@ckb-lumos/transaction-manager@0.22.0-next.5", "@ckb-lumos/transaction-manager@^0.22.0-next.5":
   version "0.22.0-next.5"
   resolved "https://registry.yarnpkg.com/@ckb-lumos/transaction-manager/-/transaction-manager-0.22.0-next.5.tgz#a7538aca9d173be4c3ba119c70db2e84c505a2cb"
   integrity sha512-Xs10tTPgxqrB1cUMUqTdAZDDpTs3ESxPLv9HmyR2jLFI6HVJjSbGJipXODYJaJ+iUNPG/qZaehHmuQoGgbBwiw==

@@ -1,0 +1,3 @@
+vector Bytes <byte>;
+array Byte32 [byte; 32];
+array Uint128 [byte; 16];

@@ -88,7 +88,7 @@ export class CkbTxHelper {
     fromCells?: Cell[],
     feeRate = 1200n,
   ): Promise<TransactionSkeletonType> {
-    logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
+    // logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
     // freeze outputs
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
@@ -125,11 +125,11 @@ export class CkbTxHelper {
         return outputs.set(outputs.size - 1, changeOutput);
       });
     }
-    logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
-    logger.debug(`capacity diff: ${await this.calculateCapacityDiff(txSkeleton)}`);
+    // logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
+    // logger.debug(`capacity diff: ${await this.calculateCapacityDiff(txSkeleton)}`);
     txSkeleton = await common.payFeeByFeeRate(txSkeleton, [fromAddress], feeRate);
-    logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
-    logger.debug(`final fee: ${await this.calculateCapacityDiff(txSkeleton)}`);
+    // logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
+    // logger.debug(`final fee: ${await this.calculateCapacityDiff(txSkeleton)}`);
     await asyncSleep(1000);
     return txSkeleton;
   }

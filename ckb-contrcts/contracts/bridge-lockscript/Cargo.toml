@@ -1,9 +1,0 @@
-[package]
-name = "bridge-lockscript"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-ckb-std = "0.15.1"
-molecule = { version = "0.7.5", default-features = false }
-force-bridge-types = { path = "../../types"}
