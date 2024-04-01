@@ -12,7 +12,7 @@ export interface ConfigItem {
   };
   script: {
     codeHash: string;
-    hashType: HashType;
+    hashType: 'data' | 'type' | 'data1';
     args?: string;
   };
 }

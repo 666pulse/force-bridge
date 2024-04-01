@@ -1,7 +1,7 @@
 import { Amount } from '@lay2/pw-core';
 import { TransactResult } from 'eosjs/dist/eosjs-api-interfaces';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
-import { OrderedActionResult, PushTransactionArgs } from 'eosjs/dist/eosjs-rpc-interfaces';
+import { OrderedActionResult, PushTransactionArgs, ReadOnlyTransactResult } from 'eosjs/dist/eosjs-rpc-interfaces';
 import { ChainType } from '../ckb/model/asset';
 import { EosConfig, forceBridgeRole } from '../config';
 import { getEosLockId } from '../db/entity/EosLock';
@@ -357,14 +357,14 @@ export class EosHandler {
       const txHash = getTxIdFromSerializedTx(unlockTx.serializedTransaction);
       record.eosTxHash = txHash;
       await this.db.saveEosUnlock([record]); //save txHash first
-      let txRes: TransactResult;
+      let txRes: TransactResult | ReadOnlyTransactResult;
       try {
         txRes = await this.chain.pushSignedTransaction(unlockTx);
         logger.info(
           `EosHandler pushSignedTransaction ckbTxHash:${record.ckbTxHash} receiver:${record.recipientAddress} eosTxhash:${record.eosTxHash} amount:${record.amount} asset:${record.asset}`,
         );
         if (!this.config.onlyWatchIrreversibleBlock) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          // @ts-ignore
           const txStatus = txRes.processed.receipt!.status;
           if (txStatus === 'executed') {
             record.status = 'success';

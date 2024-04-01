@@ -255,21 +255,22 @@ networks:
 // run via docker
 async function main() {
   // passed through: docker run -e FORCE_BRIDGE_PROJECT_DIR=$(dirname "$(pwd)")
-  nonNullable(process.env.FORCE_BRIDGE_PROJECT_DIR);
+  // nonNullable(process.env.FORCE_BRIDGE_PROJECT_DIR);
   initLog({ level: 'debug', identity: 'dev-docker' });
   // used for deploy and run service
   const ETH_PRIVATE_KEY = '0xc4ad657963930fbff2e9de3404b30a4e21432c89952ed430b56bf802945ed37a';
   const CKB_PRIVATE_KEY = '0xa800c82df5461756ae99b5c6677d019c98cc98c7786b80d7b2e77256e46ea1fe';
 
-  const MULTISIG_NUMBER = 3;
-  const MULTISIG_THRESHOLD = 3;
+  const MULTISIG_NUMBER = 1;
+  const MULTISIG_THRESHOLD = 1;
   const FORCE_BRIDGE_KEYSTORE_PASSWORD = '123456';
   // connect to docker network: docker_force-dev-net
-  const ETH_RPC_URL = 'http://10.4.0.10:8545';
-  const CKB_RPC_URL = 'http://10.4.0.11:8114';
-  const CKB_INDEXER_URL = 'http://10.4.0.12:8116';
+  const ETH_RPC_URL = 'http://127.0.0.1:8545';
+  const CKB_RPC_URL = 'http://127.0.0.1:8114/rpc';
+  const CKB_INDEXER_URL = 'http://127.0.0.1:8114/indexer';
 
-  const configPath = pathFromProjectRoot('workdir/dev-docker');
+  const configPath = pathFromProjectRoot('tmp/dev-docker');
+  console.log('configPath: ', configPath);
 
   const initConfig = {
     common: {
@@ -308,19 +309,20 @@ async function main() {
       sudtSize: 500,
     },
   };
-  const { assetWhiteList, ckbDeps, ownerConfig, bridgeEthAddress, multisigConfig, ckbStartHeight, ethStartHeight } =
-    await deployDev(
-      ETH_RPC_URL,
-      CKB_RPC_URL,
-      CKB_INDEXER_URL,
-      MULTISIG_NUMBER,
-      MULTISIG_THRESHOLD,
-      ETH_PRIVATE_KEY,
-      CKB_PRIVATE_KEY,
-      'DEV',
-      '0x01',
-      path.join(configPath, 'deployConfig.json'),
-    );
+
+  const { assetWhiteList, ckbDeps, ownerConfig, bridgeEthAddress, multisigConfig, ckbStartHeight, ethStartHeight } = await deployDev(
+    ETH_RPC_URL,
+    CKB_RPC_URL,
+    CKB_INDEXER_URL,
+    MULTISIG_NUMBER,
+    MULTISIG_THRESHOLD,
+    ETH_PRIVATE_KEY,
+    CKB_PRIVATE_KEY,
+    'DEV',
+    '0x01',
+    path.join(configPath, 'deployConfig.json'),
+  );
+
   await generateConfig(
     initConfig as unknown as Config,
     assetWhiteList,
@@ -343,18 +345,18 @@ async function main() {
       port: 3100 + i,
     };
   });
+
   const dockerComposeFile = Mustache.render(dockerComposeTemplate, {
     FORCE_BRIDGE_KEYSTORE_PASSWORD,
     network: 'docker_force-dev-net',
     projectDir: process.env.FORCE_BRIDGE_PROJECT_DIR,
     verifiers,
   });
+
   fs.writeFileSync(path.join(configPath, 'docker-compose.yml'), dockerComposeFile);
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    logger.error(`dev docker generate failed, error: ${error.stack}`);
-    process.exit(1);
-  });
+main().then(() => process.exit(0)).catch((error) => {
+  logger.error(`dev docker generate failed, error: ${error.stack}`);
+  process.exit(1);
+});

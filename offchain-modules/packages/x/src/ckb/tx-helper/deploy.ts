@@ -63,17 +63,17 @@ export class CkbDeployManager extends CkbTxHelper {
     });
     // add output
     const firstInput = {
-      previous_output: firstInputCell.out_point,
+      previous_output: firstInputCell.outPoint,
       since: '0x0',
     };
     const outputType = generateTypeIDScript(firstInput, `0x0`);
     const codeHash = utils.scriptToHash(<CKBComponents.Script>{
-      codeHash: outputType.code_hash,
-      hashType: outputType.hash_type,
+      codeHash: outputType.codeHash,
+      hashType: outputType.hashType,
       args: outputType.args,
     });
     const scriptOutput: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: fromLockscript,
         type: outputType,
@@ -81,7 +81,7 @@ export class CkbDeployManager extends CkbTxHelper {
       data: utils.bytesToHex(contract),
     };
     const scriptCapacity = minimalCellCapacity(scriptOutput);
-    scriptOutput.cell_output.capacity = `0x${scriptCapacity.toString(16)}`;
+    scriptOutput.cellOutput.capacity = `0x${scriptCapacity.toString(16)}`;
 
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(scriptOutput);
@@ -122,17 +122,17 @@ export class CkbDeployManager extends CkbTxHelper {
     });
     // add output
     const firstInput = {
-      previous_output: firstInputCell.out_point,
+      previous_output: firstInputCell.outPoint,
       since: '0x0',
     };
     const bridgeLockscriptOutputType = generateTypeIDScript(firstInput, `0x0`);
     const bridgeLockscriptCodeHash = utils.scriptToHash(<CKBComponents.Script>{
-      codeHash: bridgeLockscriptOutputType.code_hash,
-      hashType: bridgeLockscriptOutputType.hash_type,
+      codeHash: bridgeLockscriptOutputType.codeHash,
+      hashType: bridgeLockscriptOutputType.hashType,
       args: bridgeLockscriptOutputType.args,
     });
     const bridgeLockscriptOutput: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: fromLockscript,
         type: bridgeLockscriptOutputType,
@@ -140,16 +140,16 @@ export class CkbDeployManager extends CkbTxHelper {
       data: utils.bytesToHex(contracts.bridgeLockscript),
     };
     const bridgeLockscriptCapacity = minimalCellCapacity(bridgeLockscriptOutput);
-    bridgeLockscriptOutput.cell_output.capacity = `0x${bridgeLockscriptCapacity.toString(16)}`;
+    bridgeLockscriptOutput.cellOutput.capacity = `0x${bridgeLockscriptCapacity.toString(16)}`;
 
     const recipientTypescriptOutputType = generateTypeIDScript(firstInput, `0x1`);
     const recipientTypescriptCodeHash = utils.scriptToHash(<CKBComponents.Script>{
-      codeHash: recipientTypescriptOutputType.code_hash,
-      hashType: recipientTypescriptOutputType.hash_type,
+      codeHash: recipientTypescriptOutputType.codeHash,
+      hashType: recipientTypescriptOutputType.hashType,
       args: recipientTypescriptOutputType.args,
     });
     const recipientTypescriptOutput: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: fromLockscript,
         type: recipientTypescriptOutputType,
@@ -157,7 +157,7 @@ export class CkbDeployManager extends CkbTxHelper {
       data: utils.bytesToHex(contracts.recipientTypescript),
     };
     const recipientTypescriptCapacity = minimalCellCapacity(recipientTypescriptOutput);
-    recipientTypescriptOutput.cell_output.capacity = `0x${recipientTypescriptCapacity.toString(16)}`;
+    recipientTypescriptOutput.cellOutput.capacity = `0x${recipientTypescriptCapacity.toString(16)}`;
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(bridgeLockscriptOutput).push(recipientTypescriptOutput);
     });
@@ -202,14 +202,14 @@ export class CkbDeployManager extends CkbTxHelper {
     const fromLockscript = parseAddress(fromAddress);
     // add output
     const sudtOutput: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: fromLockscript,
       },
       data: utils.bytesToHex(sudtBin),
     };
     const sudtCellCapacity = minimalCellCapacity(sudtOutput);
-    sudtOutput.cell_output.capacity = `0x${sudtCellCapacity.toString(16)}`;
+    sudtOutput.cellOutput.capacity = `0x${sudtCellCapacity.toString(16)}`;
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(sudtOutput);
     });
@@ -240,14 +240,14 @@ export class CkbDeployManager extends CkbTxHelper {
     const fromLockscript = parseAddress(fromAddress);
     // add output
     const contractOutput: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: fromLockscript,
       },
       data: utils.bytesToHex(contractBin),
     };
     const contractCellCapacity = minimalCellCapacity(contractOutput);
-    contractOutput.cell_output.capacity = `0x${contractCellCapacity.toString(16)}`;
+    contractOutput.cellOutput.capacity = `0x${contractCellCapacity.toString(16)}`;
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(contractOutput);
     });
@@ -274,7 +274,7 @@ export class CkbDeployManager extends CkbTxHelper {
     const message = txSkeleton.get('signingEntries').get(0)!.message;
     const Sig = key.signRecoverable(message!, privateKey);
     const tx = sealTransaction(txSkeleton, [Sig]);
-    const hash = await this.ckb.send_transaction(tx, 'passthrough');
+    const hash = await this.ckb.sendTransaction(tx, 'passthrough');
     await this.waitUntilCommitted(hash);
     return hash;
   }
@@ -301,28 +301,28 @@ export class CkbDeployManager extends CkbTxHelper {
     });
     // add owner cell
     const firstInput = {
-      previous_output: firstInputCell.out_point,
+      previous_output: firstInputCell.outPoint,
       since: '0x0',
     };
     const ownerCellTypescript = generateTypeIDScript(firstInput, `0x0`);
     const ownerCell: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: multisigLockscript,
         type: ownerCellTypescript,
       },
       data: '0x',
     };
-    ownerCell.cell_output.capacity = `0x${minimalCellCapacity(ownerCell).toString(16)}`;
+    ownerCell.cellOutput.capacity = `0x${minimalCellCapacity(ownerCell).toString(16)}`;
     // create an empty cell for the multi sig
     const multiCell: Cell = {
-      cell_output: {
+      cellOutput: {
         capacity: '0x0',
         lock: multisigLockscript,
       },
       data: multiCellXchainType,
     };
-    multiCell.cell_output.capacity = `0x${minimalCellCapacity(multiCell).toString(16)}`;
+    multiCell.cellOutput.capacity = `0x${minimalCellCapacity(multiCell).toString(16)}`;
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(ownerCell).push(multiCell);
     });
@@ -344,12 +344,16 @@ export class CkbDeployManager extends CkbTxHelper {
     for (const u of upgrade) {
       // get input
       const typeidScript = {
-        code_hash: typeidCodeHash,
-        hash_type: 'type' as HashType,
+        codeHash: typeidCodeHash,
+        hashType: 'type' as HashType,
         args: u.typeidArgs,
       };
       const searchKey = {
-        script: typeidScript,
+        script: {
+          code_hash: typeidCodeHash,
+          hash_type: 'type' as HashType,
+          args: u.typeidArgs,
+        },
         script_type: ScriptType.type,
       };
       const typeidInputs = await this.indexer.getCells(searchKey);
@@ -359,7 +363,7 @@ export class CkbDeployManager extends CkbTxHelper {
       });
       // add output
       const NewContractOutput: Cell = {
-        cell_output: {
+        cellOutput: {
           capacity: '0x0',
           lock: fromLockscript,
           type: typeidScript,
@@ -367,7 +371,7 @@ export class CkbDeployManager extends CkbTxHelper {
         data: utils.bytesToHex(u.bin),
       };
       const sudtCellCapacity = minimalCellCapacity(NewContractOutput);
-      NewContractOutput.cell_output.capacity = `0x${sudtCellCapacity.toString(16)}`;
+      NewContractOutput.cellOutput.capacity = `0x${sudtCellCapacity.toString(16)}`;
       txSkeleton = txSkeleton.update('outputs', (outputs) => {
         return outputs.push(NewContractOutput);
       });
@@ -376,7 +380,7 @@ export class CkbDeployManager extends CkbTxHelper {
     const hash = await this.SignAndSendTransaction(txSkeleton, privateKey);
     const outpoints = upgrade.map((_u, i) => {
       return {
-        tx_hash: hash,
+        txHash: hash,
         index: '0x' + i.toString(16),
       };
     });

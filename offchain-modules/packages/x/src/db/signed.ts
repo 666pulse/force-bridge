@@ -22,7 +22,9 @@ export class SignedDb {
       .getMany();
   }
 
-  async getMaxNonceByRefTxHashes(pubKey: string, refTxHashes: string[]): Promise<{ nonce: number | null }> {
+  async getMaxNonceByRefTxHashes(pubKey: string, refTxHashes: string[]): Promise<{
+      nonce: number | undefined;
+  } | undefined> {
     return this.signedRepository
       .createQueryBuilder()
       .select('max(nonce) as nonce')

@@ -58,12 +58,16 @@ export class BalanceProvider {
   async ckbSudtBalance(tokenAddress: string, name: string): Promise<bigint> {
     const typescriptLike = new EthAsset(tokenAddress, this.ownerTypeHash).toTypeScript();
     const typescript = {
-      code_hash: typescriptLike.codeHash,
-      hash_type: typescriptLike.hashType,
+      codeHash: typescriptLike.codeHash,
+      hashType: typescriptLike.hashType,
       args: typescriptLike.args,
     };
     const searchKey: SearchKey = {
-      script: typescript,
+      script: {
+        code_hash: typescript.codeHash,
+        hash_type: typescript.hashType,
+        args: typescript.args,
+      },
       script_type: ScriptType.type,
     };
     const cells = await this.ckbIndexer.getCells(searchKey, (_index, _cell) => ({ stop: false, push: true }), {

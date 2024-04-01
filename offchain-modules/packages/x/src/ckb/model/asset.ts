@@ -23,8 +23,8 @@ export abstract class Asset {
     }
 
     this.ownerCellTypeHash = ForceBridgeCore.ckb.utils.scriptToHash(<CKBComponents.Script>{
-      codeHash: ForceBridgeCore.config.ckb.ownerCellTypescript.code_hash,
-      hashType: ForceBridgeCore.config.ckb.ownerCellTypescript.hash_type,
+      codeHash: ForceBridgeCore.config.ckb.ownerCellTypescript.codeHash,
+      hashType: ForceBridgeCore.config.ckb.ownerCellTypescript.hashType,
       args: ForceBridgeCore.config.ckb.ownerCellTypescript.args,
     });
   }

@@ -19,12 +19,19 @@ export class ScriptLike {
     return script instanceof PWScript;
   }
 
+  static isScriptLike(script: ScriptLikeTypes): script is ScriptLike {
+    return script instanceof ScriptLike;
+  }
+
   static isIndexerScript(script: ScriptLikeTypes): script is IndexerScript {
     return 'code_hash' in script && 'args' in script && 'hash_type' in script;
   }
 
   static from(script: ScriptLikeTypes): ScriptLike {
-    if (ScriptLike.isPWScript(script) || ScriptLike.isCKBComponentScript(script) || script instanceof ScriptLike) {
+    if (ScriptLike.isPWScript(script) || ScriptLike.isCKBComponentScript(script) || ScriptLike.isScriptLike(script)) {
+      if (script.hashType=="data2"){
+        return new ScriptLike(script.codeHash, script.args, "data1"); 
+      }
       return new ScriptLike(script.codeHash, script.args, script.hashType);
     }
 

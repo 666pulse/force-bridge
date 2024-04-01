@@ -18,15 +18,19 @@ export class IndexerCollector extends Collector {
       if (accCapacity >= needCapacity) {
         return { stop: true, push: false };
       }
-      if (cell.data.length / 2 - 1 > 0 || cell.cell_output.type) {
+      if (cell.data.length / 2 - 1 > 0 || cell.cellOutput.type) {
         return { stop: false, push: false };
       } else {
-        accCapacity += BigInt(cell.cell_output.capacity);
+        accCapacity += BigInt(cell.cellOutput.capacity);
         return { stop: false, push: true };
       }
     };
     const searchKey = {
-      script: lockscript,
+      script: {
+        code_hash: lockscript.codeHash,
+        hash_type: lockscript.hashType,
+        args: lockscript.args,
+      },
       script_type: ScriptType.lock,
     };
     const cells = await this.indexer.getCells(searchKey, terminator);
@@ -51,20 +55,28 @@ export class IndexerCollector extends Collector {
 
   async getBalance(lock: Script): Promise<bigint> {
     const searchKey = {
-      script: lock,
+      script: {
+        code_hash: lock.codeHash,
+        hash_type: lock.hashType,
+        args: lock.args,
+      },
       script_type: ScriptType.lock,
     };
     const cells = await this.indexer.getCells(searchKey);
     let balance = 0n;
     cells.forEach((cell) => {
-      balance += BigInt(cell.cell_output.capacity);
+      balance += BigInt(cell.cellOutput.capacity);
     });
     return balance;
   }
 
   async getSUDTBalance(sudtType: Script, userLock: Script): Promise<bigint> {
     const searchKey = {
-      script: userLock,
+      script: {
+        code_hash: userLock.codeHash,
+        hash_type: userLock.hashType,
+        args: userLock.args,
+      },
       script_type: ScriptType.lock,
       filter: {
         script: sudtType,
@@ -91,19 +103,23 @@ export class IndexerCollector extends Collector {
       if (accCapacity >= needCapacity) {
         return { stop: true, push: false };
       }
-      if (cell.cell_output.type && cell.cell_output.type.code_hash === recipientTypeCodeHash) {
-        accCapacity += BigInt(cell.cell_output.capacity);
+      if (cell.cellOutput.type && cell.cellOutput.type.codeHash === recipientTypeCodeHash) {
+        accCapacity += BigInt(cell.cellOutput.capacity);
         return { stop: false, push: true };
       }
-      if (cell.data.length / 2 - 1 > 0 || cell.cell_output.type !== undefined) {
+      if (cell.data.length / 2 - 1 > 0 || cell.cellOutput.type !== undefined) {
         return { stop: false, push: false };
       } else {
-        accCapacity += BigInt(cell.cell_output.capacity);
+        accCapacity += BigInt(cell.cellOutput.capacity);
         return { stop: false, push: true };
       }
     };
     const searchKey = {
-      script: lockscript,
+      script:{
+        code_hash: lockscript.codeHash,
+        hash_type: lockscript.hashType,
+        args: lockscript.args,
+      },
       script_type: ScriptType.lock,
     };
     const cells = await this.indexer.getCells(searchKey, terminator);

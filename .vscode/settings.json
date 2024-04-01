@@ -1,0 +1,6 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./ckb-contracts-1/contracts/bridge-lockscript/Cargo.toml",
+        "./ckb-contrcts/types/Cargo.toml"
+    ]
+}

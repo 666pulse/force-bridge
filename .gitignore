@@ -1,3 +1,5 @@
 .idea/
 dist/
 workdir/
+target/
+ckb-contracts-back/

@@ -229,6 +229,7 @@ export async function startSigServer(configPath: string): Promise<void> {
               status = 'success';
             } else {
               jsonRPCResponse.result = undefined;
+              //@ts-ignore
               jsonRPCResponse.error = { code: sigRsp.Error.Code, message: sigRsp.Error.Message };
             }
           }

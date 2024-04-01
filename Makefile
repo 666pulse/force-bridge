@@ -1,6 +1,6 @@
 local-ci: clean-dev-env install-node-modules github-ci
 
-github-ci: build-ckb-contracts start-docker
+github-ci: build-bridge-lockscript start-docker
 	cd offchain-modules && yarn integration
 
 install-node-modules:
@@ -13,8 +13,8 @@ start-docker:
 stop-docker:
 	cd docker && docker-compose down
 
-build-ckb-contracts:
-	cd ckb-contracts && make build-release
+build-bridge-lockscript:
+	cd bridge-lockscript && make build-release
 
 deploy-eth-contracts:
 	cd eth-contracts && yarn ci

@@ -243,9 +243,9 @@ export async function prepareCkbAddresses(
   const publicKey = ckb.utils.privateKeyToPublicKey(ckbPrivateKey);
   const args = `0x${ckb.utils.blake160(publicKey, 'hex')}`;
   const fromLockscript = {
-    code_hash: secp256k1Dep.codeHash,
+    codeHash: secp256k1Dep.codeHash,
     args,
-    hash_type: secp256k1Dep.hashType,
+    hashType: secp256k1Dep.hashType,
   };
   asserts(fromLockscript);
   const needSupplyCap = batchNum * 600 * 100000000 + 100000;
@@ -253,7 +253,7 @@ export async function prepareCkbAddresses(
 
   const needSupplyCapCells = await collector.getCellsByLockscriptAndCapacity(fromLockscript, BigInt(needSupplyCap));
   const inputs = needSupplyCapCells.map((cell) => {
-    return { previousOutput: { txHash: cell.out_point!.tx_hash, index: cell.out_point!.index }, since: '0x0' };
+    return { previousOutput: { txHash: cell.outPoint!.txHash, index: cell.outPoint!.index }, since: '0x0' };
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -279,7 +279,7 @@ export async function prepareCkbAddresses(
     outputsData.push('0x');
   }
 
-  const inputCap = needSupplyCapCells.map((cell) => BigInt(cell.cell_output.capacity)).reduce((a, b) => a + b, 0n);
+  const inputCap = needSupplyCapCells.map((cell) => BigInt(cell.cellOutput.capacity)).reduce((a, b) => a + b, 0n);
   const outputCap = outputs.map((cell) => BigInt(cell.capacity)).reduce((a, b) => a + b);
   const changeCellCapacity = inputCap - outputCap - 10000000n;
   outputs.push({

@@ -10,6 +10,7 @@ import {
   sealTransaction,
   TransactionSkeleton,
   TransactionSkeletonObject,
+  transactionSkeletonToObject,
   TransactionSkeletonType,
 } from '@ckb-lumos/helpers';
 import { nonNullable } from '@force-bridge/x';
@@ -155,7 +156,7 @@ async function doMakeTx(opts: Record<string, string>): Promise<void> {
         newMultisigScript: newMultisigItem,
         oldMultisigItem: valInfos.ckb.oldValInfos,
         signature: [],
-        txSkeleton: txSkeleton.toJS(),
+        txSkeleton: transactionSkeletonToObject(txSkeleton),
       };
     }
 
@@ -260,22 +261,22 @@ async function generateCkbChangeValTx(
   const oldMultisigCell = await ckbClient.fetchMultisigCell(oldMultisigLockscript, xchainCellData);
 
   const newOwnerCell: Cell = {
-    cell_output: {
+    cellOutput: {
       capacity: '0x0',
       lock: newMultisigLockscript,
-      type: oldOwnerCell!.cell_output.type,
+      type: oldOwnerCell!.cellOutput.type,
     },
     data: '0x',
   };
-  newOwnerCell.cell_output.capacity = `0x${minimalCellCapacity(newOwnerCell).toString(16)}`;
+  newOwnerCell.cellOutput.capacity = `0x${minimalCellCapacity(newOwnerCell).toString(16)}`;
   const newMultiCell: Cell = {
-    cell_output: {
+    cellOutput: {
       capacity: '0x0',
       lock: newMultisigLockscript,
     },
     data: xchainCellData,
   };
-  newMultiCell.cell_output.capacity = `0x${minimalCellCapacity(newMultiCell).toString(16)}`;
+  newMultiCell.cellOutput.capacity = `0x${minimalCellCapacity(newMultiCell).toString(16)}`;
 
   txSkeleton = await common.setupInputCell(txSkeleton, oldOwnerCell!, oldMultisigItem);
   txSkeleton = await common.setupInputCell(txSkeleton, oldMultisigCell!, oldMultisigItem);
@@ -322,7 +323,7 @@ async function sendCkbChangeValTx(
 
   console.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
   const tx = sealTransaction(txSkeleton, [content0, content1]);
-  const hash = await ckbClient.ckb.send_transaction(tx, 'passthrough');
+  const hash = await ckbClient.ckb.sendTransaction(tx, 'passthrough');
   console.log(`change tx hash ${hash}`);
   await ckbClient.waitUntilCommitted(hash);
   return;
@@ -423,7 +424,7 @@ export class CkbChangeValClient extends CkbTxHelper {
       data: '0x',
     });
     for await (const cell of cellCollector.collect()) {
-      if (cell.cell_output.type && cell.cell_output.type.args === ownerCellTypescriptArgs) {
+      if (cell.cellOutput.type && cell.cellOutput.type.args === ownerCellTypescriptArgs) {
         return cell;
       }
     }
@@ -435,7 +436,7 @@ export class CkbChangeValClient extends CkbTxHelper {
       data: xchainCellData,
     });
     for await (const cell of cellCollector.collect()) {
-      if (cell.cell_output.type === null && cell.data === xchainCellData) {
+      if (cell.cellOutput.type === null && cell.data === xchainCellData) {
         return cell;
       }
     }

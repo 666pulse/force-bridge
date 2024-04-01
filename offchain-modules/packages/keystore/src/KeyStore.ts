@@ -30,7 +30,10 @@ export class KeyStore<KeyID extends string = string> {
 
     const encrypted = raw
       .getKeyIDs()
-      .reduce((result, id) => Object.assign(result, { [id]: raw.getRawKeyData(id) }), {} as KeysData<string>);
+      .reduce(
+        (result, id) => Object.assign(result, { [id]: raw.getRawKeyData(id) }),
+        {} as KeysData<string>
+      );
 
     return new KeyStore(encrypted);
   }
@@ -64,6 +67,11 @@ export class KeyStore<KeyID extends string = string> {
   getEncryptedData(): KeysData<string> {
     return this.store
       .getKeyIDs()
-      .reduce((result, id) => Object.assign(result, { [id]: this.store.getRawKeyData(id) }), {} as KeysData<string>);
+      .reduce(
+        (result, id) => Object.assign(
+          result, { [id]: this.store.getRawKeyData(id) }
+        ), 
+        {} as KeysData<string>
+      );
   }
 }

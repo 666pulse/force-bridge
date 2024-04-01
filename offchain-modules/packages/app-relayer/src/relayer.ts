@@ -13,9 +13,14 @@ const forceBridgePath = '/force-bridge/api/v1';
 
 export async function startRelayer(configPath: string) {
   await bootstrap(configPath);
+  console.log("startRelayer")
+
   const conn = await getDBConnection();
+
+  console.log(conn)
+
   //start chain handlers
-  await startHandlers(conn);
+  startHandlers(conn);
 
   const metrics = new RpcMetric(ForceBridgeCore.config.common.role);
   // start collector rpc

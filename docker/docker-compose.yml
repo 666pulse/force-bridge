@@ -1,40 +1,24 @@
-version: "3.3"
 services:
-  mysql:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: forcebridge
-    ports:
-      - 3306:3306
-    networks:
-      forcenet:
-        ipv4_address: 10.5.0.10
-        aliases:
-          - mysql
-  ckb:
-    image: tockb/ckb-dev:v0.100.0
-    ports:
-      - "8114:8114"
-    networks:
-      forcenet:
-        ipv4_address: 10.5.0.11
-        aliases:
-          - ckb
-  ckb-indexer:
-    image: tockb/ckb-indexer:v0.3.0
-    ports:
-      - "8116:8116"
-    environment:
-      - RUST_LOG=info
-    command: ckb-indexer -s /tmp/ckb-indexer-test -c http://ckb:8114 -l 0.0.0.0:8116
-    depends_on:
-      - ckb
-    networks:
-      forcenet:
-        ipv4_address: 10.5.0.12
-        aliases:
-          - ckb-indexer
+  # mysql:
+  #   image: mysql:5.7
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: forcebridge
+  #   ports:
+  #     - 3306:3306
+  # ckb:
+  #   image: tockb/ckb-dev:v0.100.0
+  #   ports:
+  #     - "8114:8114"
+  # ckb-indexer:
+  #   image: tockb/ckb-indexer:v0.3.0
+  #   ports:
+  #     - "8116:8116"
+  #   environment:
+  #     - RUST_LOG=info
+  #   command: ckb-indexer -s /tmp/ckb-indexer-test -c http://ckb:8114 -l 0.0.0.0:8116
+  #   depends_on:
+  #     - ckb
   geth:
     image: tockb/geth-priv:v1.10.10
     volumes:
@@ -46,11 +30,6 @@ services:
         target: /config
     ports:
       - "8545:8545"
-    networks:
-      forcenet:
-        ipv4_address: 10.5.0.13
-        aliases:
-          - geth
 #  btc:
 #    image: tockb/btc-regtest
 #    stdin_open: true
@@ -73,9 +52,3 @@ services:
 #          - eos
 volumes:
   geth-dag:
-networks:
-  forcenet:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16

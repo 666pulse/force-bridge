@@ -16,6 +16,7 @@ import {
   EthRecordObservable,
 } from '@force-bridge/xchain-eth/dist/reconc';
 import axios from 'axios';
+//@ts-ignore
 import dayjs from 'dayjs';
 import { ethers } from 'ethers';
 import { assetListPriceChange } from './assetPrice';
@@ -174,8 +175,8 @@ export class Monitor {
       const mintRecipientLockscript = parseAddress(mint.recipient);
       if (
         lockRecipientLockscript.args !== mintRecipientLockscript.args ||
-        lockRecipientLockscript.hash_type !== mintRecipientLockscript.hash_type ||
-        lockRecipientLockscript.code_hash !== mintRecipientLockscript.code_hash
+        lockRecipientLockscript.hashType !== mintRecipientLockscript.hashType ||
+        lockRecipientLockscript.codeHash !== mintRecipientLockscript.codeHash
       ) {
         return `lock.recipient:${lock.recipient} != mint.recipient:${mint.recipient}`;
       }

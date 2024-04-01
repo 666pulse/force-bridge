@@ -4,17 +4,19 @@ import {
   CellCollectorResults,
   Hexadecimal,
   HexString,
-  Indexer,
   QueryOptions,
   Script,
   Tip,
   OutPoint,
   HexNumber,
+  Hash,
+  HashType,
 } from '@ckb-lumos/base';
 import { RPC } from '@ckb-lumos/rpc';
 import axios from 'axios';
 import { asyncSleep } from '../../utils';
 import { logger } from '../../utils/logger';
+import { Indexer } from '@ckb-lumos/lumos';
 
 export enum ScriptType {
   type = 'type',
@@ -28,8 +30,14 @@ export enum Order {
 
 export type HexadecimalRange = [Hexadecimal, Hexadecimal];
 
+export interface SearchScript {
+    code_hash: Hash;
+    hash_type: HashType;
+    args: HexString;
+}
+
 export interface SearchKey {
-  script: Script;
+  script: SearchScript;
   script_type: ScriptType;
   filter?: {
     script?: Script;
@@ -82,27 +90,33 @@ export interface GetTransactionsResults {
   objects: GetTransactionsResult[];
 }
 
-export class CkbIndexer implements Indexer {
+export class CkbIndexer {
   uri: string;
+  ckbIndexerUrl: string;
+  indexer: Indexer;
 
-  constructor(public ckbRpcUrl: string, public ckbIndexerUrl: string) {
+  constructor(public ckbRpcUrl: string, public indexerUrl: string) {
     this.uri = ckbRpcUrl;
+    this.ckbIndexerUrl = indexerUrl;
+    this.indexer = new Indexer(indexerUrl, ckbRpcUrl)
   }
 
   getCkbRpc(): RPC {
     return new RPC(this.ckbRpcUrl);
   }
 
-  async tip(): Promise<Tip> {
-    const res = await this.request('get_tip');
+  async tip(): Promise<any> {
+    const res = await this.request('get_indexer_tip');
     return res as Tip;
   }
 
   async waitForSync(blockDifference = 0): Promise<void> {
-    const rpcTipNumber = parseInt((await this.getCkbRpc().get_tip_header()).number, 16);
+    const rpcTipNumber = parseInt((await this.getCkbRpc().getTipHeader()).number, 16);
     logger.debug('rpcTipNumber', rpcTipNumber);
     let index = 0;
     while (true) {
+      const t = await this.tip()
+      console.log(t)
       const indexerTipNumber = parseInt((await this.tip()).block_number, 16);
       logger.debug('indexerTipNumber', indexerTipNumber);
       if (indexerTipNumber + blockDifference >= rpcTipNumber) {
@@ -121,8 +135,13 @@ export class CkbIndexer implements Indexer {
     const { lock, type } = queries;
     let searchKey: SearchKey;
     if (lock !== undefined) {
+      let s = lock as Script
       searchKey = {
-        script: lock as Script,
+        script: {
+          hash_type: s.hashType,
+          code_hash: s.codeHash,
+          args: s.args,
+        } ,
         script_type: ScriptType.lock,
       };
       if (type != undefined && type !== 'empty') {
@@ -132,8 +151,13 @@ export class CkbIndexer implements Indexer {
       }
     } else {
       if (type != undefined && type != 'empty') {
+        let s = type as Script
         searchKey = {
-          script: type as Script,
+          script: {
+            hash_type: s.hashType,
+            code_hash: s.codeHash,
+            args: s.args,
+          } ,
           script_type: ScriptType.type,
         };
       } else {
@@ -161,10 +185,10 @@ export class CkbIndexer implements Indexer {
               for (const cell of liveCells) {
                 if (queryData === 'any' || queryData === cell.output_data) {
                   yield {
-                    cell_output: cell.output,
+                    cellOutput: cell.output,
                     data: cell.output_data,
-                    out_point: cell.out_point,
-                    block_number: cell.block_number,
+                    outPoint: cell.out_point,
+                    blockNumber: cell.block_number,
                   };
                 }
               }
@@ -186,6 +210,8 @@ export class CkbIndexer implements Indexer {
       method,
       params,
     };
+    console.log('indexer request', data);
+    console.log('indexer request ckbIndexerUrl', ckbIndexerUrl);
     const res = await axios.post(ckbIndexerUrl, data);
     if (res.status !== 200) {
       throw new Error(`indexer request failed with HTTP code ${res.status}`);
@@ -284,10 +310,10 @@ $ echo '{
       logger.debug('liveCells', liveCells[liveCells.length - 1]);
       for (const liveCell of liveCells) {
         const cell: Cell = {
-          cell_output: liveCell.output,
+          cellOutput: liveCell.output,
           data: liveCell.output_data,
-          out_point: liveCell.out_point,
-          block_number: liveCell.block_number,
+          outPoint: liveCell.out_point,
+          blockNumber: liveCell.block_number,
         };
         const { stop, push } = terminator(index, cell);
         if (push) {
@@ -310,6 +336,9 @@ $ echo '{
     { sizeLimit = 0x100, order = Order.asc }: { sizeLimit?: number; order?: Order } = {},
   ): Promise<GetTransactionsResult[]> {
     let infos: GetTransactionsResult[] = [];
+    // let tx = await this.indexer.getTransactions(searchKey, { sizeLimit, order });
+    // console.log(tx)
+    
     let cursor: string | undefined;
     for (;;) {
       const params = [searchKey, order, `0x${sizeLimit.toString(16)}`, cursor];

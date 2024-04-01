@@ -421,8 +421,8 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
       case 'Nervos': {
         const userScript = parseAddress(value.userIdent);
         const sudtType = {
-          code_hash: ForceBridgeCore.config.ckb.deps.sudtType.script.codeHash,
-          hash_type: ForceBridgeCore.config.ckb.deps.sudtType.script.hashType,
+          codeHash: ForceBridgeCore.config.ckb.deps.sudtType.script.codeHash,
+          hashType: ForceBridgeCore.config.ckb.deps.sudtType.script.hashType,
           args: value.assetIdent,
         };
         const collector = new IndexerCollector(ForceBridgeCore.ckbIndexer);

@@ -1,7 +1,7 @@
-import { core, utils } from '@ckb-lumos/base';
+import { blockchain, utils } from '@ckb-lumos/base';
 import { serializeMultisigScript } from '@ckb-lumos/common-scripts/lib/secp256k1_blake160_multisig';
 import { key } from '@ckb-lumos/hd';
-import { encodeToAddress, sealTransaction, TransactionSkeletonType } from '@ckb-lumos/helpers';
+import { encodeToAddress, sealTransaction, transactionSkeletonToObject, TransactionSkeletonType } from '@ckb-lumos/helpers';
 import { RPC } from '@ckb-lumos/rpc';
 import { BigNumber } from 'bignumber.js';
 import { Reader } from 'ckb-js-toolkit';
@@ -320,8 +320,8 @@ export class CkbHandler {
       const burnPreviousTx: TransactionWithStatus = await this.ckb.rpc.getTransaction(previousOutput.txHash);
       const senderLockscript = burnPreviousTx.transaction.outputs[Number(previousOutput.index)].lock;
       const senderAddress = encodeToAddress({
-        code_hash: senderLockscript.codeHash,
-        hash_type: senderLockscript.hashType,
+        codeHash: senderLockscript.codeHash,
+        hashType: senderLockscript.hashType,
         args: senderLockscript.args,
       });
       const data: BurnDbData = {
@@ -419,8 +419,9 @@ export class CkbHandler {
     });
     if (0 === mintedSudtCellIndexes.length) return null;
 
-    const witnessArgs = new core.WitnessArgs(new Reader(tx.witnesses[0]));
-    const inputTypeWitness = witnessArgs.getInputType().value().raw();
+    // const witnessArgs = new core.WitnessArgs(new Reader(tx.witnesses[0]));
+    const witnessArgs = blockchain.WitnessArgs.unpack(tx.witnesses[0])
+    const inputTypeWitness = witnessArgs.inputType;
     const mintWitness = new MintWitness(inputTypeWitness, { validate: true });
     const lockTxHashes = mintWitness.getLockTxHashes();
     const parsedResult: MintedRecord[] = [];
@@ -556,7 +557,7 @@ export class CkbHandler {
 
         logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
         const tx = sealTransaction(txSkeleton, [content0, content1]);
-        const mintTxHash = await this.rpc.send_transaction(tx, 'passthrough');
+        const mintTxHash = await this.rpc.sendTransaction(tx, 'passthrough');
         logger.info(
           `CkbHandler doHandleMintRecords Mint Transaction has been sent, ckbTxHash ${mintTxHash}, mintIds:${mintIds}`,
         );
@@ -618,7 +619,7 @@ export class CkbHandler {
             sudtExtraData: r.sudtExtraData,
           };
         }),
-        txSkeleton: txSkeleton.toJS(),
+        txSkeleton: transactionSkeletonToObject(txSkeleton),
       },
     });
   }
@@ -698,9 +699,9 @@ export class CkbHandler {
         asset: r.asset.getAddress(),
       });
       return {
-        code_hash: ForceBridgeCore.config.ckb.deps.bridgeLock.script.codeHash,
+        codeHash: ForceBridgeCore.config.ckb.deps.bridgeLock.script.codeHash,
         args: r.asset.toBridgeLockscriptArgs(),
-        hash_type: ForceBridgeCore.config.ckb.deps.bridgeLock.script.hashType,
+        hashType: ForceBridgeCore.config.ckb.deps.bridgeLock.script.hashType,
       };
     });
 
@@ -713,7 +714,7 @@ export class CkbHandler {
       payload: {
         sigType: 'create_cell',
         createAssets: assets,
-        txSkeleton: txSkeleton.toJS(),
+        txSkeleton: transactionSkeletonToObject(txSkeleton),
       },
     });
     const signatures = sigs as string[];
@@ -726,7 +727,7 @@ export class CkbHandler {
 
     const tx = sealTransaction(txSkeleton, [content0, content1]);
     logger.info(`tx: ${JSON.stringify(tx)}`);
-    const txHash = await this.rpc.send_transaction(tx, 'passthrough');
+    const txHash = await this.rpc.sendTransaction(tx, 'passthrough');
     const txStatus = await this.waitUntilCommitted(txHash, 120);
     if (txStatus === null || txStatus.txStatus.status !== 'committed') {
       throw new Error('fail to createBridgeCell');

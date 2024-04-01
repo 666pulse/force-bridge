@@ -9,6 +9,7 @@ import {
   GetInfoResult,
   GetTransactionResult,
   PushTransactionArgs,
+  ReadOnlyTransactResult,
 } from 'eosjs/dist/eosjs-rpc-interfaces';
 import fetch from 'node-fetch/index';
 import { EosAssetAmount } from './utils';
@@ -41,7 +42,7 @@ export class EosChain {
     return this.rpc.get_account(account);
   }
 
-  transact(transaction: Transaction, transactCfg?: TransactConfig): Promise<TransactResult | PushTransactionArgs> {
+  transact(transaction: Transaction, transactCfg?: TransactConfig): Promise<TransactResult | PushTransactionArgs | ReadOnlyTransactResult> {
     return this.api.transact(transaction, transactCfg);
   }
 
@@ -67,7 +68,7 @@ export class EosChain {
     memo: string,
     tokenAccount = 'eosio.token',
     transactCfg?: TransactConfig,
-  ): Promise<TransactResult | PushTransactionArgs> {
+  ): Promise<TransactResult | PushTransactionArgs | ReadOnlyTransactResult> {
     return this.transact(
       {
         actions: [
@@ -97,7 +98,7 @@ export class EosChain {
     signatures,
     serializedTransaction,
     serializedContextFreeData,
-  }: PushTransactionArgs): Promise<TransactResult> {
+  }: PushTransactionArgs): Promise<TransactResult | ReadOnlyTransactResult> {
     return this.api.pushSignedTransaction({ signatures, serializedTransaction, serializedContextFreeData });
   }
 

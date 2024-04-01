@@ -13,10 +13,10 @@
     "test": "yarn run build"
   },
   "dependencies": {
-    "@ckb-lumos/base": "0.18.0-rc3",
-    "@ckb-lumos/common-scripts": "0.18.0-rc3",
-    "@ckb-lumos/hd": "0.18.0-rc3",
-    "@ckb-lumos/helpers": "0.18.0-rc3",
+    "@ckb-lumos/base": "^0.22.0-next.3",
+    "@ckb-lumos/common-scripts": "^0.22.0-next.3",
+    "@ckb-lumos/hd": "^0.22.0-next.3",
+    "@ckb-lumos/helpers": "^0.22.0-next.3",
     "@force-bridge/app-monitor": "^0.0.38",
     "@force-bridge/app-multisign-server": "^0.0.38",
     "@force-bridge/app-relayer": "^0.0.38",
@@ -24,7 +24,7 @@
     "@force-bridge/keystore": "^0.0.38",
     "@force-bridge/x": "^0.0.38",
     "@lay2/pw-core": "^0.3.22",
-    "@nervosnetwork/ckb-sdk-core": "^0.101.0",
+    "@nervosnetwork/ckb-sdk-core": "^0.109.1",
     "commander": "^8.1.0",
     "ethereumjs-util": "^7.1.0",
     "ethers": "^5.4.7",

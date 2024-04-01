@@ -6,6 +6,7 @@ import { Observable, from } from 'rxjs';
 import { concatMap, map, mergeMap } from 'rxjs/operators';
 import { ForceBridgeContract } from '..';
 import { ForceBridge__factory } from '../generated/contract';
+//@ts-ignore
 import { TypedEventFilter } from '../generated/contract/commons';
 
 type Provider = providers.Provider;
@@ -37,6 +38,7 @@ export class EthRecordObservable {
 
   observeLockRecord(logFilter: EventTypeOf<'Locked'>, blockFilter: BlockFilter = {}): Observable<EthLockRecord> {
     const { provider, contract } = this;
+    //@ts-ignore
     const contractLogFilter = contract.filters.Locked(logFilter.token, logFilter.sender);
     const { fromBlock = 0, toBlock } = blockFilter;
 
@@ -69,7 +71,7 @@ export class EthRecordObservable {
 
   observeUnlockRecord(logFilter: EventTypeOf<'Unlocked'>, blockFilter: BlockFilter = {}): Observable<EthUnlockRecord> {
     const { contract, provider } = this;
-
+    //@ts-ignore
     const contractLogFilter = contract.filters.Unlocked(logFilter.token, logFilter.recipient);
     const { fromBlock = 0, toBlock } = blockFilter;
 

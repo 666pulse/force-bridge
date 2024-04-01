@@ -36,7 +36,14 @@ export function createCKBRecordObservable(): CKBRecordObservable {
     ownerCellTypeHash: getOwnerTypeHash(),
     recipientType: ScriptLike.from(getRecipientTypeScript()),
     bridgeLock: ScriptLike.from(getBridgeLockscript()),
-    scriptToAddress: (script) => encodeToAddress(script.toIndexerScript()),
+    scriptToAddress: (script)=> {
+      const s = script.toIndexerScript()
+      return encodeToAddress({
+        codeHash: s.code_hash,
+        hashType: s.hash_type,
+        args: s.args,
+      })
+    },
   });
 }
 

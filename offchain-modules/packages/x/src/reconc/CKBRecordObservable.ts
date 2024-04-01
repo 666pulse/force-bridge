@@ -1,4 +1,4 @@
-import { core, utils } from '@ckb-lumos/base';
+import { blockchain,utils } from '@ckb-lumos/base';
 import { CKBIndexerClient, SearchKey, SearchKeyFilter } from '@force-bridge/ckb-indexer-client';
 import type * as Indexer from '@force-bridge/ckb-indexer-client';
 import { CkbBurnRecord, CkbMintRecord, SudtRecord } from '@force-bridge/reconc';
@@ -93,8 +93,8 @@ export class CKBRecordObservable {
                   lock: this.provider.scriptToAddress(ScriptLike.from(output.lock)),
                   direction: 'out',
                   token: utils.computeScriptHash({
-                    hash_type: output.type.hashType,
-                    code_hash: output.type.codeHash,
+                    hashType: output.type.hashType,
+                    codeHash: output.type.codeHash,
                     args: output.type.args,
                   }),
                 });
@@ -115,8 +115,8 @@ export class CKBRecordObservable {
                 lock: this.provider.scriptToAddress(ScriptLike.from(v.lock)),
                 direction: 'in',
                 token: utils.computeScriptHash({
-                  hash_type: v.type.hashType,
-                  code_hash: v.type.codeHash,
+                  hashType: v.type.hashType,
+                  codeHash: v.type.codeHash,
                   args: v.type.args,
                 }),
               });
@@ -143,7 +143,6 @@ export class CKBRecordObservable {
       script: bridgeLock.toIndexerScript(),
       script_type: 'lock',
     };
-
     const observable = from(indexer.get_transactions({ searchKey })).pipe(
       expand((res) => indexer.get_transactions({ searchKey, cursor: res.last_cursor })),
       takeWhile((res) => res.objects.length > 0),
@@ -177,8 +176,8 @@ export class CKBRecordObservable {
       mergeMap((res) => {
         try {
           const tx = res.tx;
-          const witnessArgs = new core.WitnessArgs(fromHexString(tx.transaction.witnesses[0]).buffer);
-          const inputTypeWitness = witnessArgs.getInputType().value().raw();
+          const witnessArgs = blockchain.WitnessArgs.unpack(fromHexString(tx.transaction.witnesses[0]).buffer);
+          const inputTypeWitness = witnessArgs.inputType;
           const witness = new MintWitness(inputTypeWitness, { validate: true });
           // 1 mintTx : 1 lockTxHash
           // 1 sudtOutput : 1 lockTxHash
