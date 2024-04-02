@@ -27,7 +27,7 @@ export class CkbTxHelper {
     this.ckb = new RPC(ckbRpcUrl);
     this.collector = new IndexerCollector(this.indexer);
     this.lumosConfig = getConfig();
-    logger.debug('lumosConfig', this.lumosConfig);
+    // logger.debug('lumosConfig', this.lumosConfig);
 
     this.transactionManager = new TransactionManager({
       transactionSender: this.ckb,

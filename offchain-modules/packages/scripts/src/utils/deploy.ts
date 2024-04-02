@@ -7,7 +7,7 @@ import { logger } from '@force-bridge/x/dist/utils/logger';
 import { deployEthContract } from '@force-bridge/x/dist/xchain/eth';
 import CKB from '@nervosnetwork/ckb-sdk-core';
 import { ethers } from 'ethers';
-import * as lodash from 'lodash';
+import lodash from 'lodash';
 import { genRandomVerifierConfig, VerifierConfig } from './generate';
 import { pathFromProjectRoot } from './index';
 
@@ -42,6 +42,7 @@ export async function deployDev(
   if (cachePath && fs.existsSync(cachePath)) {
     return JSON.parse(fs.readFileSync(cachePath, 'utf8'));
   }
+
   initLumosConfig(env);
   const verifierConfigs = lodash.range(MULTISIG_NUMBER).map((_i) => genRandomVerifierConfig());
   logger.debug('verifierConfigs', verifierConfigs);
@@ -73,34 +74,34 @@ export async function deployDev(
     //   pwLockDep = await ckbDeployGenerator.deployContract(pwLockBin, ckbPrivateKey);
     //   logger.info('deployed pwLockDep', JSON.stringify(pwLockDep, null, 2));
     // } else if (env === 'AGGRON4') {
-      PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/recipient-typescript');
-      PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/bridge-lockscript');
-      sudtDep = {
-        cellDep: {
-          depType: 'code',
-          outPoint: {
-            txHash: '0xe12877ebd2c3c364dc46c5c992bcfaf4fee33fa13eebdf82c591fc9825aab769',
-            index: '0x0',
-          },
+    PATH_RECIPIENT_TYPESCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/recipient-typescript');
+    PATH_BRIDGE_LOCKSCRIPT = pathFromProjectRoot('/ckb-contracts/build/release/bridge-lockscript');
+    sudtDep = {
+      cellDep: {
+        depType: 'code',
+        outPoint: {
+          txHash: '0xe12877ebd2c3c364dc46c5c992bcfaf4fee33fa13eebdf82c591fc9825aab769',
+          index: '0x0',
         },
-        script: {
-          codeHash: '0xc5e5dcf215925f7ef4dfaf5f4b4f105bc321c02776d6e7d52a1db3fcd9d011a4',
-          hashType: 'type',
+      },
+      script: {
+        codeHash: '0xc5e5dcf215925f7ef4dfaf5f4b4f105bc321c02776d6e7d52a1db3fcd9d011a4',
+        hashType: 'type',
+      },
+    };
+    pwLockDep = {
+      cellDep: {
+        depType: 'code',
+        outPoint: {
+          txHash: '0x57a62003daeab9d54aa29b944fc3b451213a5ebdf2e232216a3cfed0dde61b38',
+          index: '0x0',
         },
-      };
-      pwLockDep = {
-        cellDep: {
-          depType: 'code',
-          outPoint: {
-            txHash: '0x57a62003daeab9d54aa29b944fc3b451213a5ebdf2e232216a3cfed0dde61b38',
-            index: '0x0',
-          },
-        },
-        script: {
-          codeHash: '0x58c5f491aba6d61678b7cf7edf4910b1f5e00ec0cde2f42e0abb4fd9aff25a63',
-          hashType: 'type',
-        },
-      };
+      },
+      script: {
+        codeHash: '0x58c5f491aba6d61678b7cf7edf4910b1f5e00ec0cde2f42e0abb4fd9aff25a63',
+        hashType: 'type',
+      },
+    };
     // } else {
     //   throw new Error(`wrong env: ${env}`);
     // }
@@ -111,6 +112,7 @@ export async function deployDev(
       },
       ckbPrivateKey,
     );
+
     logger.info('deps', { contractsDeps, sudtDep });
     ckbDeps = {
       sudtType: sudtDep,
@@ -118,17 +120,20 @@ export async function deployDev(
       ...contractsDeps,
     };
   }
+
   const multisigItem = {
     R: 0,
     M: MULTISIG_THRESHOLD,
     publicKeyHashes: verifierConfigs.map((vc) => vc.ckbPubkeyHash),
   };
+
   const ownerConfig: OwnerCellConfig = await ckbDeployGenerator.createOwnerCell(
     multisigItem,
     ckbPrivateKey,
     multiCellXchainType,
   );
   logger.info('ownerConfig', ownerConfig);
+
   // generate_configs
   let assetWhiteListPath: string;
   if (env === 'DEV') {
@@ -143,6 +148,7 @@ export async function deployDev(
     threshold: MULTISIG_THRESHOLD,
     verifiers: verifierConfigs,
   };
+
   // get start height
   const provider = new ethers.providers.JsonRpcProvider(ETH_RPC_URL);
   const delta = 1;

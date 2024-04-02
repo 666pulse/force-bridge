@@ -210,8 +210,8 @@ export class CkbIndexer {
       method,
       params,
     };
-    console.log('indexer request', JSON.stringify(data));
-    console.log('indexer request ckbIndexerUrl', ckbIndexerUrl);
+    // console.log('indexer request', JSON.stringify(data));
+    // console.log('indexer request ckbIndexerUrl', ckbIndexerUrl);
 
     const res = await axios.post(ckbIndexerUrl, data);
     if (res.status !== 200) {
@@ -221,9 +221,9 @@ export class CkbIndexer {
       throw new Error(`indexer request rpc failed with error: ${JSON.stringify(res.data.error)}`);
     }
     let rdata = JSON.parse(JSON.stringify(res.data.result))
-    console.log(res.data.result)
+    // console.log(res.data.result)
     toCamel(rdata)
-    console.log(rdata)
+    // console.log(rdata)
     return rdata;
   }
 
@@ -312,7 +312,7 @@ $ echo '{
       const res: GetLiveCellsResult = await this.request('get_cells', params);
       const liveCells = res.objects;
       cursor = res.last_cursor;
-      logger.debug('liveCells', liveCells);
+      // logger.debug('liveCells', liveCells);
       for (const liveCell of liveCells) {
         const cell: Cell = {
           cellOutput: liveCell.output,

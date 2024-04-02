@@ -25,6 +25,7 @@
   },
   "version": "0.0.38",
   "devDependencies": {
+    "@types/mustache": "^4.2.5",
     "@types/shelljs": "^0.8.9"
   }
 }

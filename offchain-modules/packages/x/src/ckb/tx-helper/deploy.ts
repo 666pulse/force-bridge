@@ -64,7 +64,7 @@ export class CkbDeployManager extends CkbTxHelper {
     });
     // add output
     const firstInput = {
-      previous_output: firstInputCell.outPoint,
+      previousOutput: firstInputCell.outPoint,
       since: '0x0',
     };
     const outputType = generateTypeIDScript(firstInput, `0x0`);
@@ -110,17 +110,20 @@ export class CkbDeployManager extends CkbTxHelper {
     // logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
     // get from cells
     const fromAddress = generateSecp256k1Blake160Address(key.privateKeyToBlake160(privateKey));
+
     const fromLockscript = parseAddress(fromAddress);
     const fromCells = await this.getFromCells(fromLockscript);
     if (fromCells.length === 0) {
       throw new Error('no available cells found');
     }
+
     const firstInputCell: Cell = fromCells[0];
     txSkeleton = await common.setupInputCell(txSkeleton, firstInputCell);
     // setupInputCell will put an output same with input, clear it
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.clear();
     });
+
     // add output
     const firstInput = {
       previousOutput: firstInputCell.outPoint,
@@ -132,6 +135,7 @@ export class CkbDeployManager extends CkbTxHelper {
       hashType: bridgeLockscriptOutputType.hashType,
       args: bridgeLockscriptOutputType.args,
     });
+
     const bridgeLockscriptOutput: Cell = {
       cellOutput: {
         capacity: '0x0',
@@ -165,6 +169,8 @@ export class CkbDeployManager extends CkbTxHelper {
 
     txSkeleton = await this.completeTx(txSkeleton, fromAddress, fromCells.slice(1));
     const hash = await this.SignAndSendTransaction(txSkeleton, privateKey);
+    console.log(hash)
+
     return {
       bridgeLock: {
         cellDep: {
@@ -237,7 +243,7 @@ export class CkbDeployManager extends CkbTxHelper {
   async deployContract(contractBin: Buffer, privateKey: string): Promise<ConfigItem> {
     await this.indexer.waitForSync();
     let txSkeleton = TransactionSkeleton({ cellProvider: this.indexer });
-    
+
     // get from cells
     const fromAddress = generateSecp256k1Blake160Address(key.privateKeyToBlake160(privateKey));
     const fromLockscript = parseAddress(fromAddress);
@@ -308,7 +314,7 @@ export class CkbDeployManager extends CkbTxHelper {
     });
     // add owner cell
     const firstInput = {
-      previous_output: firstInputCell.outPoint,
+      previousOutput: firstInputCell.outPoint,
       since: '0x0',
     };
     const ownerCellTypescript = generateTypeIDScript(firstInput, `0x0`);
