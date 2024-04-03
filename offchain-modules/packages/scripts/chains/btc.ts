@@ -125,8 +125,8 @@ async function main() {
   const account = new Account(PRI_KEY);
   const multisigLockScript = getMultisigLock(ForceBridgeCore.config.ckb.multisigScript);
   const ownLockHash = ckb.utils.scriptToHash(<CKBComponents.Script>{
-    codeHash: multisigLockScript.code_hash,
-    hashType: multisigLockScript.hash_type,
+    codeHash: multisigLockScript.codeHash,
+    hashType: multisigLockScript.hashType,
     args: multisigLockScript.args,
   });
   const asset = new BtcAsset('btc', ownLockHash);
@@ -198,11 +198,11 @@ async function main() {
       }
       logger.info('btcUnlockRecords', btcUnlockRecords);
       assert(btcUnlockRecords.length === 1);
-      const eosUnlockRecord = btcUnlockRecords[0];
-      assert(eosUnlockRecord.recipientAddress == userAddr.toString());
-      logger.info('amount: ', eosUnlockRecord.amount);
+      const solUnlockRecord = btcUnlockRecords[0];
+      assert(solUnlockRecord.recipientAddress == userAddr.toString());
+      logger.info('amount: ', solUnlockRecord.amount);
       logger.info('amount: ', burnAmount.toString(0));
-      assert(eosUnlockRecord.amount === burnAmount.toString(0));
+      assert(solUnlockRecord.amount === burnAmount.toString(0));
       return true;
     },
     1000 * 10,

@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer';
-import { sha256 } from 'eosjs/dist/eosjs-key-conversions';
+// import { sha256 } from 'soljs/dist/soljs-key-conversions';
 import { asserts } from '../../errors';
 
-export class EosAssetAmount {
+export class SolAssetAmount {
   Amount: string;
   Asset: string;
   Precision: number;
@@ -12,12 +12,12 @@ export class EosAssetAmount {
     this.Precision = precision;
   }
 
-  static assetAmountFromQuantity(quantity: string): EosAssetAmount {
-    //parse quantity "1.0000 EOS" to "1.0000" and "EOS"
+  static assetAmountFromQuantity(quantity: string): SolAssetAmount {
+    //parse quantity "1.0000 SOL" to "1.0000" and "SOL"
     const res = quantity.match(/^(\d+\.\d+)\s*(\w+)?$/i);
 
     asserts(res);
-    return new EosAssetAmount(res[1], res[2], getPrecisionFromAmount(res[1]));
+    return new SolAssetAmount(res[1], res[2], getPrecisionFromAmount(res[1]));
   }
 
   toString(): string {
@@ -27,7 +27,8 @@ export class EosAssetAmount {
 
 export function getTxIdFromSerializedTx(serializedTx: Uint8Array): string {
   const buf = Buffer.from(serializedTx);
-  return Buffer.from(sha256(buf)).toString('hex');
+  // return Buffer.from(sha256(buf)).toString('hex');
+  return ""
 }
 
 export function getPrecisionFromAmount(amount: string): number {

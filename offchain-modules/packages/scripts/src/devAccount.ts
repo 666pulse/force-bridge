@@ -10,6 +10,7 @@ import { initLumosConfig } from '@force-bridge/x/dist/ckb/tx-helper/init_lumos_c
 
 import { pathFromProjectRoot } from './utils';
 
+// 验证者配置
 export interface VerifierConfig {
   privkey: string;
   ckbAddress: string;
@@ -17,12 +18,13 @@ export interface VerifierConfig {
   ethAddress: string;
 }
 
+// 多签配置
 export interface MultisigConfig {
   threshold: number;
   verifiers: VerifierConfig[];
 }
 
-
+// 账户
 interface Account {
   lockScript: Script;
   address: string;
@@ -30,8 +32,10 @@ interface Account {
   privKey: string;
 }
 
+// 生成随机私钥
 const generateRandomPrivateKey = (): string => hexify(randomBytes(32));
 
+// 生成随机账户
 const randomSecp256k1Account = (privKey?: string): Account => {
   const _privKey = (() => {
     if (privKey) {
@@ -49,7 +53,8 @@ const randomSecp256k1Account = (privKey?: string): Account => {
     args: args,
   };
 
-  const address = encodeToAddress(lockScript);
+  // const address = encodeToAddress(lockScript);
+  const address = publicKey(_privKey)
 
   return {
     lockScript,
@@ -59,7 +64,21 @@ const randomSecp256k1Account = (privKey?: string): Account => {
   };
 };
 
-// run via docker
+// 获取随机
+function publicKey(_privKey:string) :string {
+  const pubKey = key.privateToPublic(_privKey);
+  const args = key.publicKeyToBlake160(pubKey);
+  const template = getConfig().SCRIPTS["SECP256K1_BLAKE160"]!;
+  const lockScript = {
+    codeHash: template.CODE_HASH,
+    hashType: template.HASH_TYPE,
+    args: args,
+  };
+
+  return  encodeToAddress(lockScript);
+}
+
+// 获取随机账户
 async function main() {
   const configPath = pathFromProjectRoot('tmp/dev-docker');
   console.log('configPath: ', configPath);
@@ -74,8 +93,9 @@ async function main() {
   console.log('privateKeyToCkbAddress(CKB_PRIVATE_KEY) ========> ', privateKeyToCkbAddress(CKB_PRIVATE_KEY));
   console.log('privateKeyToCkbPubkeyHash(CKB_PRIVATE_KEY) ========> ', privateKeyToCkbPubkeyHash(CKB_PRIVATE_KEY));
   const fromAddress = generateSecp256k1Blake160Address(key.privateKeyToBlake160(CKB_PRIVATE_KEY));
-  console.log('Chain ckb address ========> ', fromAddress);
-
+  console.log('chain ckb address ========> ', fromAddress);
+  const fromAddress2 = publicKey(CKB_PRIVATE_KEY);
+  console.log('chain ckb address2 ========> ', fromAddress2);
 }
 
 main();

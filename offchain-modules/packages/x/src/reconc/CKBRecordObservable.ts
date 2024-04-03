@@ -259,8 +259,8 @@ export class CKBRecordObservable {
             //   case ChainType.TRON:
             //     asset = new TronAsset(uint8ArrayToString(fromHexString(assetAddress)), ownerTypeHash);
             //     break;
-            //   case ChainType.EOS:
-            //     asset = new EosAsset(uint8ArrayToString(fromHexString(assetAddress)), ownerTypeHash);
+            //   case ChainType.SOL:
+            //     asset = new SolAsset(uint8ArrayToString(fromHexString(assetAddress)), ownerTypeHash);
             //     break;
             //   default:
             //     return false;

@@ -13,8 +13,8 @@ import { BtcLock } from '../db/entity/BtcLock';
 import { BtcUnlock } from '../db/entity/BtcUnlock';
 import { CkbBurn } from '../db/entity/CkbBurn';
 import { CkbMint, CollectorCkbMint } from '../db/entity/CkbMint';
-import { EosLock } from '../db/entity/EosLock';
-import { EosUnlock } from '../db/entity/EosUnlock';
+import { SolLock } from '../db/entity/SolLock';
+import { SolUnlock } from '../db/entity/SolUnlock';
 import { EthLock } from '../db/entity/EthLock';
 import { CollectorEthUnlock, EthUnlock } from '../db/entity/EthUnlock';
 import { SignedTx } from '../db/entity/SignedTx';
@@ -151,8 +151,8 @@ export async function getDBConnection(): Promise<Connection> {
       CkbBurn,
       CkbMint,
       CollectorCkbMint,
-      EosLock,
-      EosUnlock,
+      SolLock,
+      SolUnlock,
       EthLock,
       EthUnlock,
       CollectorEthUnlock,

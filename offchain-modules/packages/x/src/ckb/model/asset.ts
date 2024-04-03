@@ -7,7 +7,7 @@ import { ScriptLike } from './script';
 export enum ChainType {
   BTC,
   ETH,
-  EOS,
+  SOL,
   TRON,
   POLKADOT,
 }
@@ -50,7 +50,7 @@ export abstract class Asset {
         return undefined !== whiteAssetList.find((asset) => asset.address === this.getAddress());
       }
       case ChainType.BTC:
-      case ChainType.EOS:
+      case ChainType.SOL:
       case ChainType.TRON:
       case ChainType.POLKADOT:
         return true;
@@ -64,7 +64,7 @@ export abstract class Asset {
         return asset.minimalBridgeAmount;
       }
       case ChainType.BTC:
-      case ChainType.EOS:
+      case ChainType.SOL:
       case ChainType.TRON:
       case ChainType.POLKADOT:
         return '0';
@@ -80,7 +80,7 @@ export abstract class Asset {
         return currentAsset.bridgeFee.out;
       }
       case ChainType.BTC:
-      case ChainType.EOS:
+      case ChainType.SOL:
       case ChainType.TRON:
       case ChainType.POLKADOT:
         return '0';
@@ -95,7 +95,7 @@ export abstract class Asset {
         return `${humanizedAmount} ${asset.symbol}`;
       }
       case ChainType.BTC:
-      case ChainType.EOS:
+      case ChainType.SOL:
       case ChainType.TRON:
       case ChainType.POLKADOT:
         throw new Error('unimplement');
@@ -109,7 +109,7 @@ export abstract class Asset {
         return new BigNumber(amount).times(new BigNumber(10).pow(asset.decimal)).toString();
       }
       case ChainType.BTC:
-      case ChainType.EOS:
+      case ChainType.SOL:
       case ChainType.TRON:
       case ChainType.POLKADOT:
         throw new Error('unimplement');
@@ -174,10 +174,10 @@ export class TronAsset extends Asset {
   }
 }
 
-export class EosAsset extends Asset {
+export class SolAsset extends Asset {
   constructor(public address: string, public ownerCellTypeHash: string = '') {
     super();
-    this.chainType = ChainType.EOS;
+    this.chainType = ChainType.SOL;
   }
 
   toBridgeLockscriptArgs(): string {

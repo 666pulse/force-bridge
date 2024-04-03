@@ -2,7 +2,7 @@
 
 > UI 正在完善，有些地方后面会改动优化
 
-Force Bridge 是连接 CKB 和其他区块链的跨链桥。目前支持 Bitcoin、Ethereum、Tron  和 Eos 跨链，未来将支持更多区块链项目。用户可以使用 [Force Bridge Dapp](https://force-bridge-dev.ckbapp.dev/bridge/Nervos/Ethereum) 将资产从其他链跨到 CKB 得到对应影子资产，以及将影子资产跨回并得到原生资产。
+Force Bridge 是连接 CKB 和其他区块链的跨链桥。目前支持 Bitcoin、Ethereum、Tron  和 Sol 跨链，未来将支持更多区块链项目。用户可以使用 [Force Bridge Dapp](https://force-bridge-dev.ckbapp.dev/bridge/Nervos/Ethereum) 将资产从其他链跨到 CKB 得到对应影子资产，以及将影子资产跨回并得到原生资产。
 
 这片文章以 Ethereum 为例，介绍 Ethereum 测试网 Rinkeby 和 CKB 测试网 Aggron 之间的跨链操作。
 

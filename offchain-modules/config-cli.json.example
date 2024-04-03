@@ -11,7 +11,7 @@
       "multiSignThreshold": 2,
       "contractAddress": "0x8326e1d621Cd32752920ed2A44B49bB1a96c7391"
     },
-    "eos": {
+    "sol": {
       "rpcUrl": "https://jungle3.cryptolions.io:443",
       "chainId": "2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840",
       "bridgerAccount": "forcebridge1",

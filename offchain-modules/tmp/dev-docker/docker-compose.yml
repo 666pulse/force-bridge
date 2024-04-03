@@ -1,0 +1,112 @@
+
+version: "3.3"
+services:
+  script:
+    image: node:16.20.2-bullseye
+    restart: on-failure
+    volumes:
+      - ./script:/data
+      - /home/wetee/work/wetee/force-bridge:/app
+    environment:
+      DOTENV_PATH: /data/.env
+      LOG_PATH: /data/script.log
+    command: |
+      sh -c '
+      cp /app/workdir/testnet-docker/.env.tx_sender /data/.env
+      cd /app/offchain-modules;
+      yarn startTxSender
+      '
+  watcher_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: forcebridge
+    ports:
+      - 3050:3306
+  watcher:
+    image: node:16.20.2-bullseye
+    restart: on-failure
+    environment:
+      FORCE_BRIDGE_KEYSTORE_PASSWORD: 123456
+    volumes:
+      - /home/wetee/work/wetee/force-bridge:/app
+      - ./watcher:/data
+    ports:
+      - "3060:80"
+    command: |
+      sh -c '
+      cd /app/offchain-modules;
+      npx ts-node ./packages/app-cli/src/index.ts rpc -cfg /data/force_bridge.json
+      '
+    depends_on:
+      - watcher_db
+  collector_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: forcebridge
+    ports:
+      - 3059:3306
+  collector:
+    image: node:16.20.2-bullseye
+    restart: on-failure
+    environment:
+      FORCE_BRIDGE_KEYSTORE_PASSWORD: 123456
+    volumes:
+      - /home/wetee/work/wetee/force-bridge:/app
+      - ./collector:/data
+    ports:
+      - "3069:80"
+    command: |
+      sh -c '
+      cd /app/offchain-modules;
+      npx ts-node ./packages/app-cli/src/index.ts collector -cfg /data/force_bridge.json
+      '
+    depends_on:
+      - collector_db
+  verifier1_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: forcebridge
+    ports:
+      - 3200:3306
+  verifier1:
+    image: node:16.20.2-bullseye
+    restart: on-failure
+    environment:
+      FORCE_BRIDGE_KEYSTORE_PASSWORD: 123456
+    volumes:
+      - /home/wetee/work/wetee/force-bridge:/app
+      - ./verifier1:/data
+    ports:
+      - 3100:80
+    command: |
+      sh -c '
+      cd /app/offchain-modules;
+      npx ts-node ./packages/app-cli/src/index.ts verifier -cfg /data/force_bridge.json
+      '
+    depends_on:
+      - verifier1_db
+  monitor_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: forcebridge
+    ports:
+      - 3064:3306
+  monitor:
+    image: node:16.20.2-bullseye
+    restart: on-failure
+    environment:
+      MONITOR_DURATION_CONFIG_PATH: /data/monitor.json
+    volumes:
+      - /home/wetee/work/wetee/force-bridge:/app
+      - ./monitor:/data
+    command: |
+      sh -c '
+      cd /app/offchain-modules;
+      npx ts-node ./packages/app-cli/src/index.ts monitor -cfg /data/force_bridge.json
+      '
+    depends_on:
+      - monitor_db

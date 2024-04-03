@@ -1,12 +1,12 @@
 import { parseAddress, transactionSkeletonToObject } from '@ckb-lumos/helpers';
-import { Asset, BtcAsset, EosAsset, EthAsset, TronAsset } from '@force-bridge/x/dist/ckb/model/asset';
+import { Asset, BtcAsset, SolAsset, EthAsset, TronAsset } from '@force-bridge/x/dist/ckb/model/asset';
 import { IndexerCollector } from '@force-bridge/x/dist/ckb/tx-helper/collector';
 import { CkbTxGenerator } from '@force-bridge/x/dist/ckb/tx-helper/generator';
 import { getOwnerTypeHash } from '@force-bridge/x/dist/ckb/tx-helper/multisig/multisig_helper';
 import { ForceBridgeCore } from '@force-bridge/x/dist/core';
 import { EthDb, TronDb } from '@force-bridge/x/dist/db';
 import { BtcDb } from '@force-bridge/x/dist/db/btc';
-import { EosDb } from '@force-bridge/x/dist/db/eos';
+import { SolDb } from '@force-bridge/x/dist/db/sol';
 import { IQuery, LockRecord, UnlockRecord } from '@force-bridge/x/dist/db/model';
 import { stringToUint8Array } from '@force-bridge/x/dist/utils';
 import { logger } from '@force-bridge/x/dist/utils/logger';
@@ -302,8 +302,8 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
       case 'Ethereum':
         dbHandler = new EthDb(this.connection);
         break;
-      case 'EOS':
-        dbHandler = new EosDb(this.connection);
+      case 'SOL':
+        dbHandler = new SolDb(this.connection);
         break;
       case 'Tron':
         dbHandler = new TronDb(this.connection);
@@ -318,7 +318,7 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     let unlockRecords: UnlockRecord[];
     switch (addressType) {
       case 'Bitcoin':
-      case 'EOS':
+      case 'SOL':
       case 'Ethereum':
       case 'Tron':
         lockRecords = await dbHandler.getLockRecordsByXChainAddress(userAddress, assetName);
@@ -431,8 +431,8 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
         break;
       }
 
-      case 'EOS':
-        // Todo: add EOS Balance query
+      case 'SOL':
+        // Todo: add SOL Balance query
         break;
       case 'Tron':
         // Todo: add Tron Balance query
@@ -573,8 +573,8 @@ function getTokenShadowIdent(XChainNetwork: XChainNetWork, XChainToken: string):
     case 'Bitcoin':
       asset = new BtcAsset('btc', ownerTypeHash);
       break;
-    case 'EOS':
-      asset = new EosAsset(XChainToken, ownerTypeHash);
+    case 'SOL':
+      asset = new SolAsset(XChainToken, ownerTypeHash);
       break;
     case 'Ethereum':
       asset = new EthAsset(XChainToken, ownerTypeHash);

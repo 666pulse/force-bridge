@@ -1,20 +1,17 @@
 import { Amount } from '@lay2/pw-core';
-import { TransactResult } from 'eosjs/dist/eosjs-api-interfaces';
-import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
-import { OrderedActionResult, PushTransactionArgs, ReadOnlyTransactResult } from 'eosjs/dist/eosjs-rpc-interfaces';
 import { ChainType } from '../ckb/model/asset';
-import { EosConfig, forceBridgeRole } from '../config';
-import { getEosLockId } from '../db/entity/EosLock';
-import { EosUnlock, EosUnlockStatus } from '../db/entity/EosUnlock';
-import { EosDb } from '../db/eos';
+import { SolConfig, forceBridgeRole } from '../config';
+import { getSolLockId } from '../db/entity/SolLock';
+import { SolUnlock, SolUnlockStatus } from '../db/entity/SolUnlock';
+import { SolDb } from '../db/sol';
 import { asyncSleep } from '../utils';
 import { logger } from '../utils/logger';
-import { EosChain } from '../xchain/eos/eosChain';
-import { EosAssetAmount, getTxIdFromSerializedTx } from '../xchain/eos/utils';
-const EosTokenAccount = 'eosio.token';
-const EosTokenTransferActionName = 'transfer';
+import { SolChain } from '../xchain/sol/solChain';
+import { SolAssetAmount, getTxIdFromSerializedTx } from '../xchain/sol/utils';
+const SolTokenAccount = 'solio.token';
+const SolTokenTransferActionName = 'transfer';
 
-export class EosLockEvent {
+export class SolLockEvent {
   TxHash: string;
   ActionIndex: number;
   BlockNumber: number;
@@ -28,20 +25,20 @@ export class EosLockEvent {
   Memo: string;
 }
 
-export class EosHandler {
+export class SolHandler {
   private role: forceBridgeRole;
-  private db: EosDb;
-  private config: EosConfig;
-  private chain: EosChain;
-  private readonly signatureProvider: JsSignatureProvider;
+  private db: SolDb;
+  private config: SolConfig;
+  private chain: SolChain;
+  // private readonly signatureProvider: JsSignatureProvider;
   private assetPrecisionCache: Map<string, number>;
 
-  constructor(db: EosDb, config: EosConfig, role: forceBridgeRole) {
+  constructor(db: SolDb, config: SolConfig, role: forceBridgeRole) {
     this.role = role;
     this.db = db;
     this.config = config;
-    this.signatureProvider = new JsSignatureProvider(this.config.privateKeys);
-    this.chain = new EosChain(this.config.rpcUrl, this.signatureProvider);
+    // this.signatureProvider = new JsSignatureProvider(this.config.privateKeys);
+    this.chain = new SolChain(this.config.rpcUrl, {});
     this.assetPrecisionCache = new Map<string, number>();
   }
 
@@ -55,35 +52,35 @@ export class EosHandler {
       return precision;
     }
     precision = await this.chain.getCurrencyPrecision(symbol);
-    this.setPrecision(symbol, precision);
-    return precision;
+    this.setPrecision(symbol, precision!);
+    return precision!;
   }
 
-  async getUnlockRecords(status: EosUnlockStatus): Promise<EosUnlock[]> {
-    return this.db.getEosUnlockRecordsToUnlock(status);
+  async getUnlockRecords(status: SolUnlockStatus): Promise<SolUnlock[]> {
+    return this.db.getSolUnlockRecordsToUnlock(status);
   }
 
-  async buildUnlockTx(record: EosUnlock): Promise<PushTransactionArgs> {
+  async buildUnlockTx(record: SolUnlock): Promise<any> {
     return (await this.chain.transfer(
       this.config.bridgerAccount,
       record.recipientAddress,
       this.config.bridgerAccountPermission,
       `${new Amount(record.amount, 0).toString(await this.getPrecision(record.asset))} ${record.asset}`,
       '',
-      EosTokenAccount,
+      SolTokenAccount,
       {
         broadcast: false,
         blocksBehind: 3,
         expireSeconds: 30,
         sign: false,
       },
-    )) as PushTransactionArgs;
+    ));
   }
 
-  isLockAction(action: OrderedActionResult): boolean {
+  isLockAction(action: any): boolean {
     const actionTrace = action.action_trace;
     const act = actionTrace.act;
-    if (act.account !== EosTokenAccount || act.name !== EosTokenTransferActionName) {
+    if (act.account !== SolTokenAccount || act.name !== SolTokenTransferActionName) {
       return false;
     }
     const data = act.data;
@@ -93,11 +90,11 @@ export class EosHandler {
     return true;
   }
 
-  async processAction(pos: number, action: OrderedActionResult): Promise<void> {
+  async processAction(pos: number, action: any): Promise<void> {
     const actionTrace = action.action_trace;
     const act = actionTrace.act;
     const data = act.data;
-    const amountAsset = EosAssetAmount.assetAmountFromQuantity(data.quantity);
+    const amountAsset = SolAssetAmount.assetAmountFromQuantity(data.quantity);
     this.setPrecision(amountAsset.Asset, amountAsset.Precision);
     const lockEvent = {
       TxHash: actionTrace.trx_id,
@@ -113,13 +110,13 @@ export class EosHandler {
       Memo: data.memo,
     };
     logger.info(
-      `EosHandler watched transfer blockNumber:${actionTrace.block_num} globalActionSeq:${action.global_action_seq} txHash:${actionTrace.trx_id} from:${data.from} to:${data.to} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${data.memo}`,
+      `SolHandler watched transfer blockNumber:${actionTrace.block_num} globalActionSeq:${action.global_action_seq} txHash:${actionTrace.trx_id} from:${data.from} to:${data.to} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${data.memo}`,
     );
     try {
       await this.processLockEvent(lockEvent);
     } catch (err) {
       logger.error(
-        `EosHandler process eosLock event failed. blockNumber:${actionTrace.block_num} globalActionSeq:${action.global_action_seq} tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo} error:${err}.`,
+        `SolHandler process solLock event failed. blockNumber:${actionTrace.block_num} globalActionSeq:${action.global_action_seq} tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo} error:${err}.`,
       );
     }
   }
@@ -137,7 +134,7 @@ export class EosHandler {
       try {
         actions = await this.chain.getActions(this.config.bridgerAccount, pos, offset);
       } catch (e) {
-        logger.error(`EosHandler getActions pos:${pos} offset:${offset} error:${e}`);
+        logger.error(`SolHandler getActions pos:${pos} offset:${offset} error:${e}`);
         await asyncSleep(3000);
         continue;
       }
@@ -197,7 +194,7 @@ export class EosHandler {
       try {
         actions = await this.chain.getActions(this.config.bridgerAccount, pos, offset);
       } catch (e) {
-        logger.error(`EosHandler getActions pos:${pos} offset:${offset} error:${e}`);
+        logger.error(`SolHandler getActions pos:${pos} offset:${offset} error:${e}`);
         await asyncSleep(3000);
         continue;
       }
@@ -238,7 +235,7 @@ export class EosHandler {
     //check chain id
     const curBlockInfo = await this.chain.getCurrentBlockInfo();
     if (curBlockInfo.chain_id != this.config.chainId) {
-      logger.error(`EosHandler chainId:${curBlockInfo.chain_id} doesn't match with:${this.config.chainId}`);
+      logger.error(`SolHandler chainId:${curBlockInfo.chain_id} doesn't match with:${this.config.chainId}`);
       return;
     }
 
@@ -249,7 +246,7 @@ export class EosHandler {
       try {
         actions = await this.chain.getActions(this.config.bridgerAccount, pos, offset);
       } catch (e) {
-        logger.error(`EosHandler getActions pos:${pos} offset:${offset} error:${e.toString()}`);
+        logger.error(`SolHandler getActions pos:${pos} offset:${offset} error:${e.toString()}`);
         await asyncSleep(3000);
       }
       const actLen = actions.actions.length;
@@ -273,9 +270,9 @@ export class EosHandler {
     }
   }
 
-  async processLockEvent(lockEvent: EosLockEvent): Promise<void> {
+  async processLockEvent(lockEvent: SolLockEvent): Promise<void> {
     const lockRecord = {
-      id: getEosLockId(lockEvent.TxHash, lockEvent.ActionIndex),
+      id: getSolLockId(lockEvent.TxHash, lockEvent.ActionIndex),
       actionPos: lockEvent.ActionPos,
       globalActionSeq: lockEvent.GlobalActionSeq,
       txHash: lockEvent.TxHash,
@@ -287,7 +284,7 @@ export class EosHandler {
       blockNumber: lockEvent.BlockNumber,
     };
     logger.info(
-      `EosHandler process EosLock successful for eos tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo}.`,
+      `SolHandler process SolLock successful for sol tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo}.`,
     );
 
     const fragments = lockRecord.memo.split(',');
@@ -298,16 +295,16 @@ export class EosHandler {
     await this.db.createCkbMint([
       {
         id: lockRecord.id,
-        chain: ChainType.EOS,
+        chain: ChainType.SOL,
         amount: lockRecord.amount,
         asset: lockRecord.token,
         recipientLockscript: fragments[0] === undefined ? '0x' : fragments[0],
         sudtExtraData: fragments[1] === undefined ? '0x' : fragments[1],
       },
     ]);
-    await this.db.createEosLock([lockRecord]);
+    await this.db.createSolLock([lockRecord]);
     logger.info(
-      `EosHandler process CkbMint successful for eos tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo}.`,
+      `SolHandler process CkbMint successful for sol tx:${lockEvent.TxHash} from:${lockEvent.From} amount:${lockEvent.Amount} asset:${lockEvent.Asset} memo:${lockEvent.Memo}.`,
     );
   }
 
@@ -324,69 +321,69 @@ export class EosHandler {
         }
         await this.processUnLockEvents(todoRecords);
       } catch (e) {
-        logger.error('EosHandler watchUnlockEvents error:', e);
+        logger.error('SolHandler watchUnlockEvents error:', e);
         await asyncSleep(3000);
       }
     }
   }
 
-  async processUnLockEvents(records: EosUnlock[]): Promise<void> {
+  async processUnLockEvents(records: SolUnlock[]): Promise<void> {
     for (const record of records) {
-      logger.info(`EosHandler processUnLockEvents get new unlockEvent:${JSON.stringify(record, null, 2)}`);
+      logger.info(`SolHandler processUnLockEvents get new unlockEvent:${JSON.stringify(record, null, 2)}`);
       record.status = 'pending';
       const unlockTx = await this.buildUnlockTx(record);
       if (this.config.privateKeys.length === 0) {
-        logger.error('Eos empty bridger account private keys');
+        logger.error('Sol empty bridger account private keys');
         return;
       }
       const signatures: string[] = [];
       for (const pubKey of this.config.publicKeys) {
-        const signedTx = await this.signatureProvider.sign({
-          chainId: this.config.chainId,
-          requiredKeys: [pubKey],
-          serializedTransaction: unlockTx.serializedTransaction,
-          serializedContextFreeData: unlockTx.serializedContextFreeData,
-          // TODO: why abis null here?
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          abis: null,
-        });
-        signatures.push(signedTx.signatures[0]);
+        // const signedTx = await this.signatureProvider.sign({
+        //   chainId: this.config.chainId,
+        //   requiredKeys: [pubKey],
+        //   serializedTransaction: unlockTx.serializedTransaction,
+        //   serializedContextFreeData: unlockTx.serializedContextFreeData,
+        //   // TODO: why abis null here?
+        //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //   // @ts-ignore
+        //   abis: null,
+        // });
+        // signatures.push(signedTx.signatures[0]);
       }
       unlockTx.signatures = signatures;
       const txHash = getTxIdFromSerializedTx(unlockTx.serializedTransaction);
-      record.eosTxHash = txHash;
-      await this.db.saveEosUnlock([record]); //save txHash first
-      let txRes: TransactResult | ReadOnlyTransactResult;
-      try {
-        txRes = await this.chain.pushSignedTransaction(unlockTx);
-        logger.info(
-          `EosHandler pushSignedTransaction ckbTxHash:${record.ckbTxHash} receiver:${record.recipientAddress} eosTxhash:${record.eosTxHash} amount:${record.amount} asset:${record.asset}`,
-        );
-        if (!this.config.onlyWatchIrreversibleBlock) {
-          // @ts-ignore
-          const txStatus = txRes.processed.receipt!.status;
-          if (txStatus === 'executed') {
-            record.status = 'success';
-          } else {
-            record.status = 'error';
-            record.message = `action status:${txStatus} doesn't executed`;
-            logger.error(
-              `EosHandler processUnLockEvents eosTxHash:${txHash} ckbTxHash:${record.ckbTxHash} receiver:${record.recipientAddress} amount:${record.amount} asset:${record.asset} action status:${txStatus} doesn't executed`,
-            );
-          }
-          await this.db.saveEosUnlock([record]);
-        }
-      } catch (e) {
-        record.status = 'error';
-        record.message = e.message;
-        logger.error(
-          `EosHandler pushSignedTransaction failed eosTxHash:${txHash} ckbTxHash:${record.ckbTxHash} receiver:${
-            record.recipientAddress
-          } amount:${record.amount} asset:${record.asset} error:${e.toString()}`,
-        );
-        await this.db.saveEosUnlock([record]);
-      }
+      record.solTxHash = txHash;
+      await this.db.saveSolUnlock([record]); //save txHash first
+      // let txRes: TransactResult | ReadOnlyTransactResult;
+      // try {
+      //   txRes = await this.chain.pushSignedTransaction(unlockTx);
+      //   logger.info(
+      //     `SolHandler pushSignedTransaction ckbTxHash:${record.ckbTxHash} receiver:${record.recipientAddress} solTxhash:${record.solTxHash} amount:${record.amount} asset:${record.asset}`,
+      //   );
+      //   if (!this.config.onlyWatchIrreversibleBlock) {
+      //     // @ts-ignore
+      //     const txStatus = txRes.processed.receipt!.status;
+      //     if (txStatus === 'executed') {
+      //       record.status = 'success';
+      //     } else {
+      //       record.status = 'error';
+      //       record.message = `action status:${txStatus} doesn't executed`;
+      //       logger.error(
+      //         `SolHandler processUnLockEvents solTxHash:${txHash} ckbTxHash:${record.ckbTxHash} receiver:${record.recipientAddress} amount:${record.amount} asset:${record.asset} action status:${txStatus} doesn't executed`,
+      //       );
+      //     }
+      //     await this.db.saveSolUnlock([record]);
+      //   }
+      // } catch (e) {
+      //   record.status = 'error';
+      //   record.message = e.message;
+      //   logger.error(
+      //     `SolHandler pushSignedTransaction failed solTxHash:${txHash} ckbTxHash:${record.ckbTxHash} receiver:${
+      //       record.recipientAddress
+      //     } amount:${record.amount} asset:${record.asset} error:${e.toString()}`,
+      //   );
+      //   await this.db.saveSolUnlock([record]);
+      // }
     }
   }
 
@@ -405,9 +402,9 @@ export class EosHandler {
           await asyncSleep(15000);
           continue;
         }
-        const newRecords = new Array<EosUnlock>();
+        const newRecords = new Array<SolUnlock>();
         for (const pendingRecord of pendingRecords) {
-          const txRes = await this.chain.getTransaction(pendingRecord.eosTxHash);
+          const txRes = await this.chain.getTransaction(pendingRecord.solTxHash);
           // fixme: there is type error here, can not compile, should check again.
           if ('error' in txRes) {
             // const {
@@ -429,15 +426,15 @@ export class EosHandler {
             pendingRecord.status = 'success';
             newRecords.push(pendingRecord);
             logger.info(
-              `EosHandler unlock status check success. ckbTxHash:${pendingRecord.ckbTxHash} receiver:${pendingRecord.recipientAddress} eosTxhash:${pendingRecord.eosTxHash} amount:${pendingRecord.amount}, asset:${pendingRecord.asset}`,
+              `SolHandler unlock status check success. ckbTxHash:${pendingRecord.ckbTxHash} receiver:${pendingRecord.recipientAddress} solTxhash:${pendingRecord.solTxHash} amount:${pendingRecord.amount}, asset:${pendingRecord.asset}`,
             );
           }
         }
         if (newRecords.length !== 0) {
-          await this.db.saveEosUnlock(newRecords);
+          await this.db.saveSolUnlock(newRecords);
         }
       } catch (e) {
-        logger.error(`EosHandler checkUnlockTxStatus error:${e}`);
+        logger.error(`SolHandler checkUnlockTxStatus error:${e}`);
         await asyncSleep(3000);
       }
     }
@@ -445,14 +442,14 @@ export class EosHandler {
 
   start(): void {
     this.watchLockEvents().catch((err) => {
-      logger.error(`EOSHandler watchLockEvents error:${err.stack}`);
+      logger.error(`SOLHandler watchLockEvents error:${err.stack}`);
     });
     this.watchUnlockEvents().catch((err) => {
-      logger.error(`EOSHandler watchUnlockEvents error:${err.stack}`);
+      logger.error(`SOLHandler watchUnlockEvents error:${err.stack}`);
     });
     this.checkUnlockTxStatus().catch((err) => {
-      logger.error(`EOSHandler checkUnlockTxStatus error:${err.stack}`);
+      logger.error(`SOLHandler checkUnlockTxStatus error:${err.stack}`);
     });
-    logger.info('eos handler started  🚀');
+    logger.info('sol handler started  🚀');
   }
 }

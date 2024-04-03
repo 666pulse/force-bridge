@@ -61,7 +61,7 @@ export interface EthConfig {
   assetWhiteList: WhiteListEthAsset[];
 }
 
-export interface EosConfig {
+export interface SolConfig {
   rpcUrl: string;
   chainId: string;
   bridgerAccount: string;
@@ -211,7 +211,7 @@ export interface Config {
   common: commonConfig;
   ckb: CkbConfig;
   eth: EthConfig;
-  eos: EosConfig;
+  sol: SolConfig;
   tron: TronConfig;
   btc: BtcConfig;
   collector?: collectorConfig;

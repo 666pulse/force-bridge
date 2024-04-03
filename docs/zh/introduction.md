@@ -27,7 +27,7 @@ Force Bridge 的跨链流程概述（以 BTC 为例）：
 - Bitcoin: BTC
 - Ethereum: ETH 和 ERC20 token
 - TRON: TRX、TRC10 和 TRC20
-- EOS: 所有 eosio.token，包括 EOS
+- SOL: 所有 solio.token，包括 SOL
 
 ## 架构设计
 
@@ -42,7 +42,7 @@ Force Bridge 的跨链流程概述（以 BTC 为例）：
     - xchain handler
         - eth
         - btc
-        - eos
+        - sol
         - tron
 
 ## 组件详细说明
@@ -206,7 +206,7 @@ src
 │   ├── utils
 │   └── xchain          # 所有支持的链的工具模块
 │       ├── btc
-│       ├── eos
+│       ├── sol
 │       ├── eth
 │       └── tron
 └── scripts

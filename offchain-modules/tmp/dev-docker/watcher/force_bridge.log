@@ -1,0 +1,105 @@
+[2024-04-02T05:46:37.633 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:46:37.782 FATAL node:net:1278] Unhandled rejection Error: connect ECONNREFUSED 172.19.0.3:3306
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1278:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '172.19.0.3',
+  port: 3306,
+  fatal: true
+}
+[2024-04-02T05:46:47.943 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:46:48.116 FATAL node:net:1278] Unhandled rejection Error: connect ECONNREFUSED 172.19.0.3:3306
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1278:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '172.19.0.3',
+  port: 3306,
+  fatal: true
+}
+[2024-04-02T05:46:56.835 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:46:57.124 INFO handlers/index.ts:24] startHandlers role:watcher
+[2024-04-02T05:46:57.138 INFO handlers/ckb.ts:767] ckb handler started 🚀
+[2024-04-02T05:46:57.144 INFO handlers/eth.ts:461] eth handler started  🚀
+[2024-04-02T05:46:57.146 INFO checker/databaseChecker.ts:99] database checker started  🚀
+[2024-04-02T05:46:57.164 FATAL src.ts/index.ts:269] Unhandled rejection Error: could not detect network (event="noNetwork", code=NETWORK_ERROR, version=providers/5.7.2)
+    at Logger.makeError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:269:28)
+    at Logger.throwError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:281:20)
+    at JsonRpcProvider.<anonymous> (/app/offchain-modules/node_modules/@ethersproject/providers/src.ts/json-rpc-provider.ts:483:23)
+    at step (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:48:23)
+    at Object.throw (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:29:53)
+    at rejected (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:21:65)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  reason: 'could not detect network',
+  code: 'NETWORK_ERROR',
+  event: 'noNetwork'
+}
+[2024-04-02T05:47:04.310 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:47:04.439 INFO handlers/index.ts:24] startHandlers role:watcher
+[2024-04-02T05:47:04.453 INFO handlers/ckb.ts:767] ckb handler started 🚀
+[2024-04-02T05:47:04.459 INFO handlers/eth.ts:461] eth handler started  🚀
+[2024-04-02T05:47:04.460 INFO checker/databaseChecker.ts:99] database checker started  🚀
+[2024-04-02T05:47:04.478 FATAL src.ts/index.ts:269] Unhandled rejection Error: could not detect network (event="noNetwork", code=NETWORK_ERROR, version=providers/5.7.2)
+    at Logger.makeError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:269:28)
+    at Logger.throwError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:281:20)
+    at JsonRpcProvider.<anonymous> (/app/offchain-modules/node_modules/@ethersproject/providers/src.ts/json-rpc-provider.ts:483:23)
+    at step (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:48:23)
+    at Object.throw (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:29:53)
+    at rejected (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:21:65)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  reason: 'could not detect network',
+  code: 'NETWORK_ERROR',
+  event: 'noNetwork'
+}
+[2024-04-02T05:47:11.779 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:47:11.900 INFO handlers/index.ts:24] startHandlers role:watcher
+[2024-04-02T05:47:11.913 INFO handlers/ckb.ts:767] ckb handler started 🚀
+[2024-04-02T05:47:11.920 INFO handlers/eth.ts:461] eth handler started  🚀
+[2024-04-02T05:47:11.921 INFO checker/databaseChecker.ts:99] database checker started  🚀
+[2024-04-02T05:47:11.941 FATAL src.ts/index.ts:269] Unhandled rejection Error: could not detect network (event="noNetwork", code=NETWORK_ERROR, version=providers/5.7.2)
+    at Logger.makeError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:269:28)
+    at Logger.throwError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:281:20)
+    at JsonRpcProvider.<anonymous> (/app/offchain-modules/node_modules/@ethersproject/providers/src.ts/json-rpc-provider.ts:483:23)
+    at step (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:48:23)
+    at Object.throw (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:29:53)
+    at rejected (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:21:65)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  reason: 'could not detect network',
+  code: 'NETWORK_ERROR',
+  event: 'noNetwork'
+}
+[2024-04-02T05:47:19.984 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:47:20.107 INFO handlers/index.ts:24] startHandlers role:watcher
+[2024-04-02T05:47:20.120 INFO handlers/ckb.ts:767] ckb handler started 🚀
+[2024-04-02T05:47:20.127 INFO handlers/eth.ts:461] eth handler started  🚀
+[2024-04-02T05:47:20.128 INFO checker/databaseChecker.ts:99] database checker started  🚀
+[2024-04-02T05:47:20.146 FATAL src.ts/index.ts:269] Unhandled rejection Error: could not detect network (event="noNetwork", code=NETWORK_ERROR, version=providers/5.7.2)
+    at Logger.makeError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:269:28)
+    at Logger.throwError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:281:20)
+    at JsonRpcProvider.<anonymous> (/app/offchain-modules/node_modules/@ethersproject/providers/src.ts/json-rpc-provider.ts:483:23)
+    at step (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:48:23)
+    at Object.throw (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:29:53)
+    at rejected (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:21:65)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  reason: 'could not detect network',
+  code: 'NETWORK_ERROR',
+  event: 'noNetwork'
+}
+[2024-04-02T05:47:29.387 INFO server/serverSingleton.ts:16] server handler started on 80  🚀
+[2024-04-02T05:47:29.517 INFO handlers/index.ts:24] startHandlers role:watcher
+[2024-04-02T05:47:29.531 INFO handlers/ckb.ts:767] ckb handler started 🚀
+[2024-04-02T05:47:29.537 INFO handlers/eth.ts:461] eth handler started  🚀
+[2024-04-02T05:47:29.539 INFO checker/databaseChecker.ts:99] database checker started  🚀
+[2024-04-02T05:47:29.561 FATAL src.ts/index.ts:269] Unhandled rejection Error: could not detect network (event="noNetwork", code=NETWORK_ERROR, version=providers/5.7.2)
+    at Logger.makeError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:269:28)
+    at Logger.throwError (/app/offchain-modules/node_modules/@ethersproject/logger/src.ts/index.ts:281:20)
+    at JsonRpcProvider.<anonymous> (/app/offchain-modules/node_modules/@ethersproject/providers/src.ts/json-rpc-provider.ts:483:23)
+    at step (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:48:23)
+    at Object.throw (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:29:53)
+    at rejected (/app/offchain-modules/node_modules/@ethersproject/providers/lib/json-rpc-provider.js:21:65)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  reason: 'could not detect network',
+  code: 'NETWORK_ERROR',
+  event: 'noNetwork'
+}

@@ -1,47 +1,47 @@
 // import { nonNullable } from '@force-bridge/x';
 // import { Account } from '@force-bridge/x/dist/ckb/model/accounts';
-// import { EosAsset } from '@force-bridge/x/dist/ckb/model/asset';
+// import { SolAsset } from '@force-bridge/x/dist/ckb/model/asset';
 // import { IndexerCollector } from '@force-bridge/x/dist/ckb/tx-helper/collector';
 // import { CkbTxGenerator } from '@force-bridge/x/dist/ckb/tx-helper/generator';
 // import { getOwnerTypeHash } from '@force-bridge/x/dist/ckb/tx-helper/multisig/multisig_helper';
 // import { ForceBridgeCore } from '@force-bridge/x/dist/core';
 // import { asyncSleep } from '@force-bridge/x/dist/utils';
-// import { EosChain } from '@force-bridge/x/dist/xchain/eos/eosChain';
-// import { EosAssetAmount } from '@force-bridge/x/dist/xchain/eos/utils';
+// import { SolChain } from '@force-bridge/x/dist/xchain/sol/solChain';
+// import { SolAssetAmount } from '@force-bridge/x/dist/xchain/sol/utils';
 // import { Amount } from '@lay2/pw-core';
 // import commander from 'commander';
-// import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
+// import { JsSignatureProvider } from 'soljs/dist/soljs-jssig';
 // import { getSudtBalance, parseOptions, waitUnlockTxCompleted } from './utils';
 //
-// export const eosCmd = new commander.Command('eos');
-// eosCmd
+// export const solCmd = new commander.Command('sol');
+// solCmd
 //   .command('lock')
 //   .requiredOption('-acc, --account', 'account to lock')
-//   .requiredOption('-p, --privateKey', 'private key of locked account on eos')
-//   .requiredOption('-a, --amount', 'amount to lock, eg: 0.0001 EOS')
+//   .requiredOption('-p, --privateKey', 'private key of locked account on sol')
+//   .requiredOption('-a, --amount', 'amount to lock, eg: 0.0001 SOL')
 //   .requiredOption('-r, --recipient', 'recipient address on ckb')
 //   .option('-e, --extra', 'extra data of sudt')
 //   .option('-w, --wait', 'whether waiting for transaction become irreversible')
 //   .action(doLock)
-//   .description('lock asset on eos');
+//   .description('lock asset on sol');
 //
-// eosCmd
+// solCmd
 //   .command('unlock')
-//   .requiredOption('-r, recipient', 'recipient account on eos')
+//   .requiredOption('-r, recipient', 'recipient account on sol')
 //   .requiredOption('-p, --privateKey', 'private key of unlock address on ckb')
-//   .requiredOption('-a, --amount', 'amount of unlock, eg: 0.0001 EOS')
+//   .requiredOption('-a, --amount', 'amount of unlock, eg: 0.0001 SOL')
 //   .option('-w, --wait', 'whether waiting for transaction confirmed')
 //   .action(doUnlock)
-//   .description('unlock asset on eos');
+//   .description('unlock asset on sol');
 //
-// eosCmd
+// solCmd
 //   .command('balanceOf')
 //   .option('-addr, --address', 'address on ckb')
-//   .option('-acc, --account', 'account on eos to query')
-//   .option('-s, --asset', 'asset symbol', 'EOS')
-//   .option('-v, --detail', 'show detail information of balance on eos')
+//   .option('-acc, --account', 'account on sol to query')
+//   .option('-s, --asset', 'asset symbol', 'SOL')
+//   .option('-v, --detail', 'show detail information of balance on sol')
 //   .action(doBalanceOf)
-//   .description('query balance of account on eos or ckb');
+//   .description('query balance of account on sol or ckb');
 //
 // async function doLock(
 //   opts: { account: boolean; privateKey: boolean; amount: boolean; recipient: boolean; extra?: boolean; wait?: boolean },
@@ -54,19 +54,19 @@
 //   const recipient = options.get('recipient');
 //   const extra = options.get('extra');
 //   const memo = nonNullable(extra === undefined ? recipient : `${recipient},${extra}`);
-//   const assetAmount = EosAssetAmount.assetAmountFromQuantity(amount);
+//   const assetAmount = SolAssetAmount.assetAmountFromQuantity(amount);
 //   if (!assetAmount.Asset) {
-//     assetAmount.Asset = 'EOS';
+//     assetAmount.Asset = 'SOL';
 //   }
 //
-//   const chain = createEosChain(ForceBridgeCore.config.eos.rpcUrl, privateKey);
+//   const chain = createSolChain(ForceBridgeCore.config.sol.rpcUrl, privateKey);
 //   const txRes = await chain.transfer(
 //     account,
-//     ForceBridgeCore.config.eos.bridgerAccount,
+//     ForceBridgeCore.config.sol.bridgerAccount,
 //     'active',
 //     assetAmount.toString(),
 //     memo,
-//     'eosio.token',
+//     'solio.token',
 //     {
 //       broadcast: true,
 //       blocksBehind: 3,
@@ -101,9 +101,9 @@
 //   const recipientAddress = nonNullable(options.get('recipient'));
 //   const amount = nonNullable(options.get('amount'));
 //   const privateKey = nonNullable(options.get('privateKey'));
-//   const assetAmount = EosAssetAmount.assetAmountFromQuantity(amount);
+//   const assetAmount = SolAssetAmount.assetAmountFromQuantity(amount);
 //   if (!assetAmount.Asset) {
-//     assetAmount.Asset = 'EOS';
+//     assetAmount.Asset = 'SOL';
 //   }
 //
 //   const account = new Account(privateKey);
@@ -111,7 +111,7 @@
 //   const burnTx = await generator.burn(
 //     await account.getLockscript(),
 //     recipientAddress,
-//     new EosAsset(assetAmount.Asset, getOwnerTypeHash()),
+//     new SolAsset(assetAmount.Asset, getOwnerTypeHash()),
 //     new Amount(assetAmount.Amount, assetAmount.Precision),
 //   );
 //   const signedTx = ForceBridgeCore.ckb.signTransaction(privateKey)(burnTx);
@@ -137,18 +137,18 @@
 //     console.log('account or address are required');
 //     return;
 //   }
-//   const token = nonNullable(!options.get('asset') ? 'EOS' : options.get('asset'));
+//   const token = nonNullable(!options.get('asset') ? 'SOL' : options.get('asset'));
 //
 //   // TODO why private key here?
 //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //   // @ts-ignore
-//   const chain = createEosChain(ForceBridgeCore.config.eos.rpcUrl, null);
+//   const chain = createSolChain(ForceBridgeCore.config.sol.rpcUrl, null);
 //   if (account) {
 //     const balance = await chain.getCurrencyBalance(account, token);
 //     console.log(balance);
 //   }
 //   if (address) {
-//     const asset = new EosAsset(token, getOwnerTypeHash());
+//     const asset = new SolAsset(token, getOwnerTypeHash());
 //     const balance = await getSudtBalance(address, asset);
 //     console.log(
 //       `BalanceOf address:${address} on ckb is ${balance.toString(await chain.getCurrencyPrecision(token))} ${token}`,
@@ -156,11 +156,11 @@
 //   }
 // }
 //
-// function createEosChain(rpcUrl: string, privateKeys: string): EosChain {
+// function createSolChain(rpcUrl: string, privateKeys: string): SolChain {
 //   let signatureProvider: JsSignatureProvider;
 //   if (privateKeys) {
 //     signatureProvider = new JsSignatureProvider(privateKeys.split(','));
 //   }
 //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//   return new EosChain(rpcUrl, signatureProvider!);
+//   return new SolChain(rpcUrl, signatureProvider!);
 // }

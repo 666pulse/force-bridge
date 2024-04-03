@@ -8,13 +8,13 @@ import {
   BtcUnlock,
   CkbBurn,
   CkbMint,
-  EosUnlock,
+  SolUnlock,
   EthLock,
   EthUnlock,
   IBtcUnLock,
   ICkbBurn,
   ICkbMint,
-  IEosUnlock,
+  ISolUnlock,
   IEthUnlock,
   ITronUnlock,
   MintedRecords,
@@ -143,10 +143,10 @@ export class CkbDb {
     await ethUnlockRepo.save(dbRecords);
   }
 
-  async createEosUnlock(records: IEosUnlock[]): Promise<void> {
-    const eosUnlockRepo = await this.connection.getRepository(EosUnlock);
-    const dbRecords = records.map((r) => eosUnlockRepo.create(r));
-    await eosUnlockRepo.save(dbRecords);
+  async createSolUnlock(records: ISolUnlock[]): Promise<void> {
+    const solUnlockRepo = await this.connection.getRepository(SolUnlock);
+    const dbRecords = records.map((r) => solUnlockRepo.create(r));
+    await solUnlockRepo.save(dbRecords);
   }
 
   async createTronUnlock(records: ITronUnlock[]): Promise<void> {

@@ -3,7 +3,7 @@ import { ChainType } from '../ckb/model/asset';
 import { SigType } from '../multisig/multisig-mgr';
 import { BtcUnlock } from './entity/BtcUnlock';
 import { CkbMint, CkbMintStatus, dbTxStatus } from './entity/CkbMint';
-import { EosUnlock } from './entity/EosUnlock';
+import { SolUnlock } from './entity/SolUnlock';
 import { EthLock, TxConfirmStatus } from './entity/EthLock';
 import { EthUnlock, EthUnlockStatus } from './entity/EthUnlock';
 
@@ -11,8 +11,8 @@ export { EthUnlock } from './entity/EthUnlock';
 export { EthLock, TxConfirmStatus } from './entity/EthLock';
 export { BtcLock } from './entity/BtcLock';
 export { BtcUnlock } from './entity/BtcUnlock';
-export { EosLock } from './entity/EosLock';
-export { EosUnlock } from './entity/EosUnlock';
+export { SolLock } from './entity/SolLock';
+export { SolUnlock } from './entity/SolUnlock';
 export { CkbMint } from './entity/CkbMint';
 export { CkbBurn } from './entity/CkbBurn';
 export { TronLock } from './entity/TronLock';
@@ -113,7 +113,7 @@ export interface ITronUnlock {
   recipientAddress: string;
 }
 
-export type XchainUnlock = EthUnlock | BtcUnlock | EosUnlock;
+export type XchainUnlock = EthUnlock | BtcUnlock | SolUnlock;
 
 // export async function transformBurnEvent(burn: CkbBurn): Promise<XchainUnlock> {
 //   throw new Error('Method not implemented.');
@@ -142,7 +142,7 @@ export function EthLock2CkbMint(record: EthLock): CkbMint {
   });
 }
 
-export interface IEosLock {
+export interface ISolLock {
   id: string;
   globalActionSeq: number;
   actionPos: number;
@@ -155,18 +155,18 @@ export interface IEosLock {
   blockNumber: number;
 }
 
-export interface IEosUnlock {
+export interface ISolUnlock {
   ckbTxHash: string;
   asset: string;
   amount: string;
   recipientAddress: string;
 }
 
-export function EosLock2CkbMint(record: IEosLock): CkbMint {
+export function SolLock2CkbMint(record: ISolLock): CkbMint {
   const ckbMintRepo = getRepository(CkbMint);
   return ckbMintRepo.create({
     id: record.id,
-    chain: ChainType.EOS,
+    chain: ChainType.SOL,
     amount: record.amount,
     asset: record.token,
     recipientLockscript: record.memo,

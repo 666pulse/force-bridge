@@ -15,7 +15,7 @@ The chains and assets we have already supported:
 - Bitcoin: BTC
 - Ethereum: ETH and all ERC20 tokens
 - TRON: TRX, all TRC10 and TRC20
-- EOS: all `eosio.token`
+- SOL: all `solio.token`
 
 As long as we can transfer the fungible asset between user and multi-signature address on one chain,
 along with some additional data, we can implement the associated component in force bridge.

@@ -1,28 +1,28 @@
-// invoke in eos handler
+// invoke in sol handler
 
 import { Connection, Repository } from 'typeorm';
-import { EosUnlockStatus } from './entity/EosUnlock';
-import { CkbBurn, CkbMint, EosLock, EosUnlock, ICkbMint, IEosLock, IQuery, LockRecord, UnlockRecord } from './model';
+import { SolUnlockStatus } from './entity/SolUnlock';
+import { CkbBurn, CkbMint, SolLock, SolUnlock, ICkbMint, ISolLock, IQuery, LockRecord, UnlockRecord } from './model';
 
-export class EosDb implements IQuery {
+export class SolDb implements IQuery {
   private ckbMintRepository: Repository<CkbMint>;
-  private eosLockRepository: Repository<EosLock>;
-  private eosUnlockRepository: Repository<EosUnlock>;
+  private solLockRepository: Repository<SolLock>;
+  private solUnlockRepository: Repository<SolUnlock>;
 
   constructor(private conn: Connection) {
     this.ckbMintRepository = conn.getRepository(CkbMint);
-    this.eosLockRepository = conn.getRepository(EosLock);
-    this.eosUnlockRepository = conn.getRepository(EosUnlock);
+    this.solLockRepository = conn.getRepository(SolLock);
+    this.solUnlockRepository = conn.getRepository(SolUnlock);
   }
 
   async getLastedGlobalActionSeq(): Promise<number> {
-    const rawRes = await this.conn.manager.query('select max(global_action_Seq) as lasted_global_seq from eos_lock');
+    const rawRes = await this.conn.manager.query('select max(global_action_Seq) as lasted_global_seq from sol_lock');
     return rawRes[0].lasted_global_seq || -1;
   }
 
   async getActionPos(globalActionSeq: number): Promise<number> {
     const rawRes = await this.conn.manager.query(
-      'select action_pos from eos_lock where global_action_Seq = ' + globalActionSeq,
+      'select action_pos from sol_lock where global_action_Seq = ' + globalActionSeq,
     );
     return rawRes.length === 0 ? 0 : rawRes[0].action_pos;
   }
@@ -32,17 +32,17 @@ export class EosDb implements IQuery {
     await this.ckbMintRepository.save(dbRecords);
   }
 
-  async saveEosUnlock(records: EosUnlock[]): Promise<void> {
-    await this.eosUnlockRepository.save(records);
+  async saveSolUnlock(records: SolUnlock[]): Promise<void> {
+    await this.solUnlockRepository.save(records);
   }
 
-  async createEosLock(records: IEosLock[]): Promise<void> {
-    const dbRecords = records.map((r) => this.eosLockRepository.create(r));
-    await this.eosLockRepository.save(dbRecords);
+  async createSolLock(records: ISolLock[]): Promise<void> {
+    const dbRecords = records.map((r) => this.solLockRepository.create(r));
+    await this.solLockRepository.save(dbRecords);
   }
 
-  async getEosUnlockRecordsToUnlock(status: EosUnlockStatus, take = 1): Promise<EosUnlock[]> {
-    return this.eosUnlockRepository.find({
+  async getSolUnlockRecordsToUnlock(status: SolUnlockStatus, take = 1): Promise<SolUnlock[]> {
+    return this.solUnlockRepository.find({
       where: {
         status,
       },
@@ -54,20 +54,20 @@ export class EosDb implements IQuery {
     return await this.conn
       .getRepository(CkbMint)
       .createQueryBuilder('ckb')
-      .innerJoinAndSelect('eos_lock', 'eos', 'eos.id = ckb.id')
+      .innerJoinAndSelect('sol_lock', 'sol', 'sol.id = ckb.id')
       .where('ckb.recipient_lockscript = :recipient AND ckb.asset = :asset', {
         recipient: ckbRecipientAddr,
         asset: XChainAsset,
       })
       .select(
         `
-        eos.sender as sender, 
+        sol.sender as sender, 
         ckb.recipient_lockscript as recipient , 
-        eos.amount as lock_amount,
+        sol.amount as lock_amount,
         ckb.amount as mint_amount,
-        eos.id as lock_hash,
+        sol.id as lock_hash,
         ckb.mint_hash as mint_hash,
-        eos.updated_at as lock_time, 
+        sol.updated_at as lock_time, 
         ckb.updated_at as mint_time, 
         ckb.status as status,
         ckb.asset as asset,
@@ -82,7 +82,7 @@ export class EosDb implements IQuery {
     return await this.conn
       .getRepository(CkbBurn)
       .createQueryBuilder('ckb')
-      .innerJoinAndSelect('eos_unlock', 'eos', 'eos.ckb_tx_hash = ckb.ckb_tx_hash')
+      .innerJoinAndSelect('sol_unlock', 'sol', 'sol.ckb_tx_hash = ckb.ckb_tx_hash')
       .where('ckb.sender_address = :sender_address AND ckb.asset = :asset', {
         sender_address: ckbLockScriptHash,
         asset: XChainAsset,
@@ -90,16 +90,16 @@ export class EosDb implements IQuery {
       .select(
         `
         ckb.sender_address as sender, 
-        eos.recipient_address as recipient ,
+        sol.recipient_address as recipient ,
         ckb.amount as burn_amount, 
-        eos.amount as unlock_amount,
+        sol.amount as unlock_amount,
         ckb.ckb_tx_hash as burn_hash,
-        eos.eos_tx_hash as unlock_hash,
-        eos.updated_at as unlock_time, 
+        sol.sol_tx_hash as unlock_hash,
+        sol.updated_at as unlock_time, 
         ckb.updated_at as burn_time, 
-        eos.status as status,
+        sol.status as status,
         ckb.asset as asset,
-        eos.message as message
+        sol.message as message
       `,
       )
       .orderBy('ckb.updated_at', 'DESC')
@@ -110,17 +110,17 @@ export class EosDb implements IQuery {
     return await this.conn
       .getRepository(CkbMint)
       .createQueryBuilder('ckb')
-      .innerJoinAndSelect('eos_lock', 'eos', 'eos.id = ckb.id')
-      .where('eos.sender = :sender AND ckb.asset = :asset', { sender: XChainSender, asset: XChainAsset })
+      .innerJoinAndSelect('sol_lock', 'sol', 'sol.id = ckb.id')
+      .where('sol.sender = :sender AND ckb.asset = :asset', { sender: XChainSender, asset: XChainAsset })
       .select(
         `
-        eos.sender as sender, 
+        sol.sender as sender, 
         ckb.recipient_lockscript as recipient , 
-        eos.amount as lock_amount,
+        sol.amount as lock_amount,
         ckb.amount as mint_amount,
-        eos.id as lock_hash,
+        sol.id as lock_hash,
         ckb.mint_hash as mint_hash,
-        eos.updated_at as lock_time, 
+        sol.updated_at as lock_time, 
         ckb.updated_at as mint_time, 
         ckb.status as status,
         ckb.asset as asset,
@@ -135,7 +135,7 @@ export class EosDb implements IQuery {
     return await this.conn
       .getRepository(CkbBurn)
       .createQueryBuilder('ckb')
-      .innerJoinAndSelect('eos_unlock', 'eos', 'eos.ckb_tx_hash = ckb.ckb_tx_hash')
+      .innerJoinAndSelect('sol_unlock', 'sol', 'sol.ckb_tx_hash = ckb.ckb_tx_hash')
       .where('ckb.recipient_address = :recipient_address AND ckb.asset = :asset', {
         recipient_address: XChainRecipientAddr,
         asset: XChainAsset,
@@ -143,16 +143,16 @@ export class EosDb implements IQuery {
       .select(
         `
         ckb.sender_address as sender, 
-        eos.recipient_address as recipient ,
+        sol.recipient_address as recipient ,
         ckb.amount as burn_amount, 
-        eos.amount as unlock_amount,
+        sol.amount as unlock_amount,
         ckb.ckb_tx_hash as burn_hash,
-        eos.eos_tx_hash as unlock_hash,
-        eos.updated_at as unlock_time, 
+        sol.sol_tx_hash as unlock_hash,
+        sol.updated_at as unlock_time, 
         ckb.updated_at as burn_time, 
-        eos.status as status,
+        sol.status as status,
         ckb.asset as asset,
-        eos.message as message
+        sol.message as message
       `,
       )
       .orderBy('ckb.updated_at', 'DESC')

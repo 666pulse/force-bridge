@@ -4,4 +4,4 @@ workdir/
 target/
 ckb-contracts-back/
 docker/ckb
-**/tmp
+# **/tmp

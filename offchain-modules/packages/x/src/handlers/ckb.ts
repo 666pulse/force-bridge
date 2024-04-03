@@ -6,7 +6,7 @@ import { RPC } from '@ckb-lumos/rpc';
 import { BigNumber } from 'bignumber.js';
 import { Reader } from 'ckb-js-toolkit';
 import * as lodash from 'lodash';
-import { BtcAsset, ChainType, EosAsset, EthAsset, getAsset, TronAsset } from '../ckb/model/asset';
+import { BtcAsset, ChainType, SolAsset, EthAsset, getAsset, TronAsset } from '../ckb/model/asset';
 import { RecipientCellData } from '../ckb/tx-helper/generated/eth_recipient_cell';
 import { ForceBridgeLockscriptArgs } from '../ckb/tx-helper/generated/force_bridge_lockscript';
 import { MintWitness } from '../ckb/tx-helper/generated/mint_witness';
@@ -145,8 +145,8 @@ export class CkbHandler {
         case ChainType.ETH:
           await this.db.createCollectorEthUnlock([collectorEthUnlock]);
           break;
-        case ChainType.EOS:
-          await this.db.createEosUnlock([
+        case ChainType.SOL:
+          await this.db.createSolUnlock([
             {
               ckbTxHash: burn.ckbTxHash,
               asset: burn.asset,
@@ -650,10 +650,10 @@ export class CkbHandler {
           amount: BigInt(r.amount),
           sudtExtraData: r.sudtExtraData,
         };
-      case ChainType.EOS:
+      case ChainType.SOL:
         return {
           id: r.id,
-          asset: new EosAsset(r.asset, ownerTypeHash),
+          asset: new SolAsset(r.asset, ownerTypeHash),
           recipient: r.recipientLockscript,
           amount: BigInt(r.amount),
           sudtExtraData: r.sudtExtraData,

@@ -4,11 +4,11 @@ import { DatabaseChecker } from '../checker/databaseChecker';
 import { ForceBridgeCore } from '../core';
 import { BridgeFeeDB, CkbDb, EthDb, KVDb, TronDb } from '../db';
 import { BtcDb } from '../db/btc';
-import { EosDb } from '../db/eos';
+import { SolDb } from '../db/sol';
 import { StatDb } from '../db/stat';
 import { BtcHandler } from '../handlers/btc';
 import { CkbHandler } from '../handlers/ckb';
-import { EosHandler } from '../handlers/eos';
+import { SolHandler } from '../handlers/sol';
 import { EthHandler } from '../handlers/eth';
 import { TronHandler } from '../handlers/tron';
 import { BridgeMetricSingleton } from '../metric/bridge-metric';
@@ -16,6 +16,7 @@ import { logger } from '../utils/logger';
 import { BTCChain } from '../xchain/btc';
 import { EthChain } from '../xchain/eth';
 
+// 监控对应的链上数据，然后判断是否有需要处理的交易
 export function startHandlers(conn: Connection): void {
   if (ForceBridgeCore.config.common.role === undefined) {
     ForceBridgeCore.config.common.role = 'watcher';
@@ -46,10 +47,10 @@ export function startHandlers(conn: Connection): void {
     longTimePendingChecker.start();
   }
 
-  if (ForceBridgeCore.config.eos !== undefined) {
-    const eosDb = new EosDb(conn);
-    const eosHandler = new EosHandler(eosDb, ForceBridgeCore.config.eos, role);
-    eosHandler.start();
+  if (ForceBridgeCore.config.sol !== undefined) {
+    const solDb = new SolDb(conn);
+    const solHandler = new SolHandler(solDb, ForceBridgeCore.config.sol, role);
+    solHandler.start();
   }
 
   if (ForceBridgeCore.config.tron !== undefined) {

@@ -1,7 +1,7 @@
 # Force Bridge Dapp User Guide
 
 Force bridge is a cross-chain bridge connecting CKB and other blockchains. Force bridge supports Ethereum currently,
-and will support more blockchains, such as Bitcoin, Tron, EOS, etc. Users can use Force Bridge to lock assets on these
+and will support more blockchains, such as Bitcoin, Tron, SOL, etc. Users can use Force Bridge to lock assets on these
 blockchains and gain shadow assets on CKB, or to burn mirror assets on CKB and receive original assets.
 
 This article uses Ethereum as an example to introduce the bridge operation between Ethereum and CKB.

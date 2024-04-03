@@ -1,10 +1,10 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { dbTxStatus } from './CkbMint';
 
-export type EosUnlockStatus = dbTxStatus;
+export type SolUnlockStatus = dbTxStatus;
 
 @Entity()
-export class EosUnlock {
+export class SolUnlock {
   @PrimaryColumn()
   ckbTxHash: string;
 
@@ -18,10 +18,10 @@ export class EosUnlock {
   recipientAddress: string;
 
   @Column({ nullable: true })
-  eosTxHash: string;
+  solTxHash: string;
 
   @Column({ default: 'todo' })
-  status: EosUnlockStatus;
+  status: SolUnlockStatus;
 
   @Column({ type: 'text', nullable: true })
   message: string;

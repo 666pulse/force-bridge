@@ -8,7 +8,7 @@ import {
   TransactionSkeletonType,
   TransactionSkeletonObject,
 } from '@ckb-lumos/helpers';
-import { BtcAsset, ChainType, EosAsset, EthAsset, TronAsset } from '@force-bridge/x/dist/ckb/model/asset';
+import { BtcAsset, ChainType, SolAsset, EthAsset, TronAsset } from '@force-bridge/x/dist/ckb/model/asset';
 import { getOwnerTypeHash } from '@force-bridge/x/dist/ckb/tx-helper/multisig/multisig_helper';
 import { ForceBridgeCore } from '@force-bridge/x/dist/core';
 import { EthLock } from '@force-bridge/x/dist/db/entity/EthLock';
@@ -61,8 +61,8 @@ async function verifyCreateCellTx(rawData: string, payload: ckbCollectSignatures
       case ChainType.TRON:
         asset = new TronAsset(createAsset.asset, ownerTypeHash);
         break;
-      case ChainType.EOS:
-        asset = new EosAsset(createAsset.asset, ownerTypeHash);
+      case ChainType.SOL:
+        asset = new SolAsset(createAsset.asset, ownerTypeHash);
         break;
       default:
         return new SigError(SigErrorCode.InvalidParams, `chain type:${createAsset.chain} doesn't support`);
@@ -149,7 +149,7 @@ async function verifyMintTx(pubKey: string, rawData: string, payload: ckbCollect
     const mintRecord = mintRecords[i];
     if (
       mintRecord.chain === ChainType.BTC ||
-      mintRecord.chain === ChainType.EOS ||
+      mintRecord.chain === ChainType.SOL ||
       mintRecord.chain === ChainType.TRON
     ) {
       //those chains doesn't verify now

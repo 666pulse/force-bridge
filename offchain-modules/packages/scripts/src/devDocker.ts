@@ -1,19 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import { key } from '@ckb-lumos/hd';
+import lodash from 'lodash';
+import * as Mustache from 'mustache';
 import { generateSecp256k1Blake160Address } from '@ckb-lumos/helpers';
 import { OwnerCellConfig } from '@force-bridge/x/dist/ckb/tx-helper/deploy';
 import { Config, WhiteListEthAsset, CkbDeps } from '@force-bridge/x/dist/config';
 import { privateKeyToCkbPubkeyHash, privateKeyToCkbAddress, writeJsonToFile } from '@force-bridge/x/dist/utils';
-import { logger, initLog } from '@force-bridge/x/dist/utils/logger';
+import { initLog } from '@force-bridge/x/dist/utils/logger';
 import { KeyStore } from '@force-bridge/keystore/dist';
 import { initLumosConfig } from '@force-bridge/x/dist/ckb/tx-helper/init_lumos_config';
+import { nonNullable } from '@force-bridge/x';
 
-import lodash from 'lodash';
-import * as Mustache from 'mustache';
 import { pathFromProjectRoot } from './utils';
 import { deployDev } from './utils/deploy';
-import { nonNullable } from '@force-bridge/x';
 
 export interface VerifierConfig {
   privkey: string;
@@ -31,6 +31,7 @@ export interface MultisigConfig {
 async function main() {
   nonNullable(process.env.FORCE_BRIDGE_PROJECT_DIR);
   initLog({ level: 'debug', identity: 'dev-docker' });
+
   // used for deploy and run service
   const ETH_PRIVATE_KEY = '0xc4ad657963930fbff2e9de3404b30a4e21432c89952ed430b56bf802945ed37a';
   const CKB_PRIVATE_KEY = "0x52e9814fe02dad3b8299dbf3c30dc94b4d822ecf9ff00e6bd64d0c5fba771faf";
@@ -38,6 +39,7 @@ async function main() {
   const MULTISIG_NUMBER = 1;
   const MULTISIG_THRESHOLD = 1;
   const FORCE_BRIDGE_KEYSTORE_PASSWORD = '123456';
+
   // connect to docker network: docker_force-dev-net
   const ETH_RPC_URL = 'http://127.0.0.1:8545';
   const CKB_RPC_URL = 'https://testnet.ckb.dev/rpc';
@@ -154,9 +156,10 @@ async function generateConfig(
   configPath: string,
   ETH_PRIVATE_KEY: string,
   CKB_PRIVATE_KEY: string,
-  password,
+  password: string,
 ) {
   const baseConfig: Config = lodash.cloneDeep(initConfig);
+  
   // logger.debug(`baseConfig: ${JSON.stringify(baseConfig, null, 2)}`);
   baseConfig.eth.assetWhiteList = assetWhiteList;
   baseConfig.eth.contractAddress = ethContractAddress;

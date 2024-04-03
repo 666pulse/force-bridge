@@ -44,7 +44,7 @@ export class XChainHandlers {
   public ckb: XChainHandler;
   public eth?: XChainHandler;
   public btc?: XChainHandler;
-  public eos?: XChainHandler;
+  public sol?: XChainHandler;
   public tron?: XChainHandler;
 }
 

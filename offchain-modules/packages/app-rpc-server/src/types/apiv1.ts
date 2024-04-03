@@ -73,7 +73,7 @@ export type GetBridgeTransactionStatusPayload = {
   txId: string;
 };
 
-export type XChainNetWork = 'Bitcoin' | 'Ethereum' | 'EOS' | 'Tron';
+export type XChainNetWork = 'Bitcoin' | 'Ethereum' | 'SOL' | 'Tron';
 
 export interface GetBridgeTransactionSummariesPayload<N extends XChainNetWork> {
   network: N;

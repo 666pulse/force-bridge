@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
-export class EosLock {
+export class SolLock {
   @PrimaryColumn()
   id: string; //txHash + actionIndex
 
@@ -43,6 +43,6 @@ export class EosLock {
   updatedAt: string;
 }
 
-export function getEosLockId(txHash: string, actionIndex: number): string {
+export function getSolLockId(txHash: string, actionIndex: number): string {
   return `${txHash}_${actionIndex}`;
 }

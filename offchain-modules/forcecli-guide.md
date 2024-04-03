@@ -29,7 +29,7 @@ Options:
 
 Commands:
   eth
-  eos
+  sol
   tron
   btc
   help [command]  display help for command

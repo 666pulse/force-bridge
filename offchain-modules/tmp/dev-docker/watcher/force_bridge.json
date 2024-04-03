@@ -1,0 +1,161 @@
+{
+  "forceBridge": {
+    "common": {
+      "log": {
+        "level": "info",
+        "logFile": "/data/force_bridge.log"
+      },
+      "lumosConfigType": "AGGRON4",
+      "network": "testnet",
+      "role": "watcher",
+      "orm": {
+        "type": "mysql",
+        "host": "watcher_db",
+        "port": 3306,
+        "username": "root",
+        "password": "root",
+        "database": "forcebridge",
+        "timezone": "Z",
+        "synchronize": true,
+        "logging": false
+      },
+      "openMetric": true,
+      "collectorPubKeyHash": [],
+      "port": 80
+    },
+    "eth": {
+      "rpcUrl": "http://127.0.0.1:8545",
+      "confirmNumber": 12,
+      "startBlockHeight": 13927,
+      "assetWhiteList": [
+        {
+          "address": "0x0000000000000000000000000000000000000000",
+          "name": "ETH",
+          "symbol": "ETH",
+          "decimal": 18,
+          "logoURI": "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=002",
+          "minimalBridgeAmount": "10000000000000",
+          "bridgeFee": {
+            "in": "1000000000000",
+            "out": "2000000000000"
+          }
+        },
+        {
+          "address": "0x9D4b99b866910E9647d5f8D35CCAbFc91c0A501F",
+          "name": "DAI",
+          "symbol": "DAI",
+          "decimal": 18,
+          "logoURI": "https://cryptologos.cc/logos/single-collateral-dai-sai-logo.svg?v=002",
+          "minimalBridgeAmount": "1000000000000000",
+          "bridgeFee": {
+            "in": "1000000000000",
+            "out": "2000000000000"
+          }
+        },
+        {
+          "address": "0xD5b940de010672CF8C009b2DDb2d7095d40C5175",
+          "name": "USDT",
+          "symbol": "USDT",
+          "decimal": 6,
+          "logoURI": "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=002",
+          "minimalBridgeAmount": "1000",
+          "bridgeFee": {
+            "in": "10",
+            "out": "20"
+          }
+        },
+        {
+          "address": "0x149Dd3299643b4d607ef7E63ad6C94ca4C1b3527",
+          "name": "USDC",
+          "symbol": "USDC",
+          "decimal": 6,
+          "logoURI": "https://cryptologos.cc/logos/usd-coin-usdc-logo.svg?v=002",
+          "minimalBridgeAmount": "1000",
+          "bridgeFee": {
+            "in": "10",
+            "out": "20"
+          }
+        },
+        {
+          "address": "0x6fB39185e89959AeF4a47A84611fB36255C2b3da",
+          "name": "WBTC",
+          "symbol": "WBTC",
+          "decimal": 8,
+          "logoURI": "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.svg?v=002",
+          "minimalBridgeAmount": "1000000000",
+          "bridgeFee": {
+            "in": "1000000000",
+            "out": "1000000000"
+          }
+        }
+      ],
+      "contractAddress": "0xE3736AC5bbC363D5b07873D7E42b35842aF9ca6f"
+    },
+    "ckb": {
+      "ckbRpcUrl": "https://testnet.ckb.dev/rpc",
+      "ckbIndexerUrl": "https://testnet.ckb.dev/indexer",
+      "startBlockHeight": 12791047,
+      "confirmNumber": 15,
+      "sudtSize": 500,
+      "deps": {
+        "sudtType": {
+          "cellDep": {
+            "depType": "code",
+            "outPoint": {
+              "txHash": "0xe12877ebd2c3c364dc46c5c992bcfaf4fee33fa13eebdf82c591fc9825aab769",
+              "index": "0x0"
+            }
+          },
+          "script": {
+            "codeHash": "0xc5e5dcf215925f7ef4dfaf5f4b4f105bc321c02776d6e7d52a1db3fcd9d011a4",
+            "hashType": "type"
+          }
+        },
+        "pwLock": {
+          "cellDep": {
+            "depType": "code",
+            "outPoint": {
+              "txHash": "0x57a62003daeab9d54aa29b944fc3b451213a5ebdf2e232216a3cfed0dde61b38",
+              "index": "0x0"
+            }
+          },
+          "script": {
+            "codeHash": "0x58c5f491aba6d61678b7cf7edf4910b1f5e00ec0cde2f42e0abb4fd9aff25a63",
+            "hashType": "type"
+          }
+        },
+        "bridgeLock": {
+          "cellDep": {
+            "depType": "code",
+            "outPoint": {
+              "txHash": "0xb3bda75083bddbc2ec5b373969897fd8bb91161a73f26dd30f0b1eba34a30b98",
+              "index": "0x0"
+            }
+          },
+          "script": {
+            "codeHash": "0xcc7f3efd17d916558a649a583174cf24b07c8df12578452b702db24e99f3e81b",
+            "hashType": "type"
+          }
+        },
+        "recipientType": {
+          "cellDep": {
+            "depType": "code",
+            "outPoint": {
+              "txHash": "0xb3bda75083bddbc2ec5b373969897fd8bb91161a73f26dd30f0b1eba34a30b98",
+              "index": "0x1"
+            }
+          },
+          "script": {
+            "codeHash": "0xa8c235370b431cb15ac8ec731611c5ee506d2fd40dd904fe32311cb4baf045ad",
+            "hashType": "type"
+          }
+        }
+      },
+      "ownerCellTypescript": {
+        "codeHash": "0x00000000000000000000000000000000000000000000000000545950455f4944",
+        "hashType": "type",
+        "args": "0x33422fe4e3b34faeb0812c3b87dc228ddca566e1b16a4d90cc820b106dafbf71"
+      }
+    }
+  }
+}
