@@ -45,7 +45,7 @@ async function main() {
   const CKB_RPC_URL = 'https://testnet.ckb.dev/rpc';
   const CKB_INDEXER_URL = 'https://testnet.ckb.dev/indexer';
 
-  const configPath = pathFromProjectRoot('/offchain-modules/tmp/dev-docker');
+  const configPath = pathFromProjectRoot('/offchain-modules/hacks/dev-docker');
   console.log('configPath: ', configPath);
   const lumosConfigType = 'AGGRON4';
 
