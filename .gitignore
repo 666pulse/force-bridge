@@ -5,3 +5,4 @@ target/
 ckb-contracts-back/
 docker/ckb
 # **/tmp
+**.log
