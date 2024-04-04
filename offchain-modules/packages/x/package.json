@@ -22,6 +22,7 @@
     "@ckb-lumos/lumos": "^0.22.0-next.5",
     "@ckb-lumos/rpc": "^0.22.0-next.5",
     "@ckb-lumos/transaction-manager": "^0.22.0-next.5",
+    "@coral-xyz/anchor": "^0.29.0",
     "@force-bridge/ckb-indexer-client": "^0.0.38",
     "@force-bridge/internal": "^0.0.38",
     "@force-bridge/keystore": "^0.0.38",

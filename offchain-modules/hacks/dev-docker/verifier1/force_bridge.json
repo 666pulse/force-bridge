@@ -3,7 +3,7 @@
     "common": {
       "log": {
         "level": "info",
-        "logFile": "/home/wetee/work/wetee/force-bridge/offchain-modules/tmp/dev-docker/verifier1/force_bridge.log"
+        "logFile": "/home/wetee/work/wetee/force-bridge/offchain-modules/hacks/dev-docker/verifier1/force_bridge.log"
       },
       "lumosConfigType": "AGGRON4",
       "network": "testnet",
@@ -24,7 +24,7 @@
         "0xca558de4535b228abf5004b9796b1bcb7ab92f8a"
       ],
       "port": 38001,
-      "keystorePath": "/home/wetee/work/wetee/force-bridge/offchain-modules/tmp/dev-docker/verifier1/keystore.json"
+      "keystorePath": "/home/wetee/work/wetee/force-bridge/offchain-modules/hacks/dev-docker/verifier1/keystore.json"
     },
     "eth": {
       "rpcUrl": "http://127.0.0.1:8545",
@@ -161,6 +161,12 @@
         "args": "0x33422fe4e3b34faeb0812c3b87dc228ddca566e1b16a4d90cc820b106dafbf71"
       },
       "privateKey": "verifier"
+    },
+    "sol":{
+      "rpcUrl":"https://devnet.helius-rpc.com/?api-key=4327eb86-4e9f-4126-bad7-cdc60699afdb",
+      "contractAddress":"B2bYAPkQwmsuAnpyx4Efe3YR1FwKw4ApdxBW5rSSh7NQ",
+      "bridgerAccount":[],
+      "privateKey":[]
     }
   }
 }

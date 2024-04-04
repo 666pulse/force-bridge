@@ -183,12 +183,12 @@ export class CkbIndexer {
               const liveCells = res.objects;
               cursor = res.last_cursor;
               for (const cell of liveCells) {
-                if (queryData === 'any' || queryData === cell.output_data) {
+                if (queryData === 'any' || queryData === cell.outputData) {
                   yield {
                     cellOutput: cell.output,
-                    data: cell.output_data,
-                    outPoint: cell.out_point,
-                    blockNumber: cell.block_number,
+                    data: cell.outputData,
+                    outPoint: cell.outPoint,
+                    blockNumber: cell.blockNumber,
                   };
                 }
               }

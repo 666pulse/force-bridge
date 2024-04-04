@@ -10,4 +10,4 @@ cd $DIR/../
 
 export FORCE_BRIDGE_KEYSTORE_PASSWORD="123456"
 
-ts-node ./packages/app-cli/src/index.ts verifier -cfg tmp/dev-docker/verifier1/force_bridge.json
+ts-node ./packages/app-cli/src/index.ts verifier -cfg hacks/dev-docker/verifier1/force_bridge.json

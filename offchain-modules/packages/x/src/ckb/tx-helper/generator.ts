@@ -110,6 +110,7 @@ export class CkbTxGenerator extends CkbTxHelper {
         const fromAddress = getFromAddr();
         let txSkeleton = TransactionSkeleton({ cellProvider: this.indexer });
         const multisig_cell = await this.fetchMultisigCell();
+        
         txSkeleton = await common.setupInputCell(txSkeleton, multisig_cell!, ForceBridgeCore.config.ckb.multisigScript);
         const bridgeOutputs = scripts.map((script) => {
           const cell: Cell = {
@@ -173,6 +174,7 @@ export class CkbTxGenerator extends CkbTxHelper {
           inputType: mintWitness,
           outputType: undefined,
         });
+
         txSkeleton = txSkeleton.update('witnesses', (witnesses) => {
           if (witnesses.isEmpty()) {
             return witnesses.push(`0x${toHexString(new Uint8Array(mintWitnessArgs))}`);
@@ -182,20 +184,29 @@ export class CkbTxGenerator extends CkbTxHelper {
           const newWitnessArgs: WitnessArgs = {
             inputType: `0x${toHexString(new Uint8Array(mintWitness))}`,
           };
+
           if (witnessArgs.lock) {
             newWitnessArgs.lock = witnessArgs.lock
           }
           if (witnessArgs.outputType) {
             newWitnessArgs.outputType = witnessArgs.outputType;
           }
+
+          let newWitnessArgs2 = normalizers.NormalizeWitnessArgs(newWitnessArgs)
+          let newWitnessArgs3 = blockchain.WitnessArgs.pack(newWitnessArgs2)
           return witnesses.set(
             0,
-            new Reader(blockchain.WitnessArgs.pack(normalizers.NormalizeWitnessArgs(newWitnessArgs))).serializeJson(),
+            new Reader(
+              newWitnessArgs3.buffer
+            ).serializeJson(),
           );
         });
 
+
         txSkeleton = await this.buildSudtOutput(txSkeleton, records);
+
         txSkeleton = await this.buildBridgeCellOutput(txSkeleton, records);
+
         txSkeleton = await this.completeTx(txSkeleton, fromAddress);
         txSkeleton = common.prepareSigningEntries(txSkeleton);
         return txSkeleton;
@@ -221,7 +232,13 @@ export class CkbTxGenerator extends CkbTxHelper {
   ): Promise<TransactionSkeletonType> {
     for (const record of records) {
       asserts(record.amount !== 0n, '0 amount should be filtered');
-      const recipientLockscript = parseAddress(record.recipient);
+      const recipientLockscript = parseAddress(record.recipient)
+      // const recipientLockscript = {
+      //   codeHash:
+      //     "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      //   hashType: "type",
+      //   args: "0x36c329ed630d6ce750712a477543672adab57f4c",
+      // }
       const bridgeCellLockscript = {
         codeHash: ForceBridgeCore.config.ckb.deps.bridgeLock.script.codeHash,
         hashType: ForceBridgeCore.config.ckb.deps.bridgeLock.script.hashType,
@@ -238,8 +255,9 @@ export class CkbTxGenerator extends CkbTxHelper {
             args: sudtArgs,
           },
         },
-        data: utils.toBigUInt128LE(record.amount) + record.sudtExtraData.slice(2),
+        data: utils.toBigUInt128LE(record.amount),
       };
+
       const sudtCapacity = ForceBridgeCore.config.ckb.sudtSize * 10 ** 8;
       logger.debug(
         `check sudtSize: ${JSON.stringify({

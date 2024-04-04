@@ -17,8 +17,6 @@ export async function startRelayer(configPath: string) {
 
   const conn = await getDBConnection();
 
-  console.log(conn)
-
   //start chain handlers
   startHandlers(conn);
 

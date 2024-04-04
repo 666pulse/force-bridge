@@ -63,16 +63,18 @@ export interface EthConfig {
 
 export interface SolConfig {
   rpcUrl: string;
-  chainId: string;
+  contractAddress: string;
   bridgerAccount: string;
-  bridgerAccountPermission: string;
   publicKeys: string[];
-  /**
-   * @deprecated migrate to {@link KeyStore}
-   */
   privateKeys: string[];
-  latestGlobalActionSeq: number;
-  onlyWatchIrreversibleBlock: boolean;
+  // bridgerAccountPermission: string;
+  // publicKeys: string[];
+  // /**
+  //  * @deprecated migrate to {@link KeyStore}
+  //  */
+  // privateKeys: string[];
+  // latestGlobalActionSeq: number;
+  // onlyWatchIrreversibleBlock: boolean;
 }
 
 export interface TronConfig {

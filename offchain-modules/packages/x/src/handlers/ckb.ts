@@ -239,7 +239,8 @@ export class CkbHandler {
     const txs = lodash.uniqBy(await this.ckbIndexer.getTransactions(searchKey), 'tx_hash');
     const result: CkbTxInfo[] = [];
     for (const tx of txs) {
-      const txWithStatus = await this.ckb.rpc.getTransaction(tx.tx_hash);
+      const txx =  JSON.parse(JSON.stringify(tx))
+      const txWithStatus = await this.ckb.rpc.getTransaction(txx.txHash);
       result.push({
         info: tx,
         tx: txWithStatus,
@@ -276,11 +277,11 @@ export class CkbHandler {
     );
 
     for (const tx of mintTxs) {
-      const parsedMintRecords = await this.parseMintTx(tx.tx.transaction, Number(tx.info.block_number));
-      if (parsedMintRecords) {
-        await this.onMintTx(Number(tx.info.block_number), parsedMintRecords);
-        BridgeMetricSingleton.getInstance(this.role).addBridgeTxMetrics('ckb_mint', 'success');
-      }
+      // const parsedMintRecords = await this.parseMintTx(tx.tx.transaction, Number(tx.info.block_number));
+      // if (parsedMintRecords) {
+        // await this.onMintTx(Number(tx.info.block_number), );
+        // BridgeMetricSingleton.getInstance(this.role).addBridgeTxMetrics('ckb_mint', 'success');
+      // }
     }
 
     for (const tx of burnTxs) {
@@ -288,12 +289,12 @@ export class CkbHandler {
     }
   }
 
-  async onMintTx(blockNumber: number, mintedRecords: MintedRecords): Promise<void> {
-    await this.db.watcherCreateMint(blockNumber, mintedRecords);
-    await this.db.updateBridgeInRecords(mintedRecords);
-    if (this.role === 'collector') {
-      await this.db.updateCollectorCkbMintStatus(blockNumber, mintedRecords.txHash, 'success');
-    }
+  async onMintTx(blockNumber: number): Promise<void> {
+    // await this.db.watcherCreateMint(blockNumber, mintedRecords);
+    // await this.db.updateBridgeInRecords(mintedRecords);
+    // if (this.role === 'collector') {
+    //   await this.db.updateCollectorCkbMintStatus(blockNumber,"0x", 'success');
+    // }
   }
 
   async onBurnTx(txInfo: CkbTxInfo, currentHeight: number): Promise<void> {
@@ -422,15 +423,15 @@ export class CkbHandler {
     // const witnessArgs = new core.WitnessArgs(new Reader(tx.witnesses[0]));
     const witnessArgs = blockchain.WitnessArgs.unpack(tx.witnesses[0])
     const inputTypeWitness = witnessArgs.inputType;
-    const mintWitness = new MintWitness(inputTypeWitness, { validate: true });
-    const lockTxHashes = mintWitness.getLockTxHashes();
+    // const mintWitness = new MintWitness(inputTypeWitness, { validate: true });
+    // const lockTxHashes = mintWitness.getLockTxHashes();
     const parsedResult: MintedRecord[] = [];
-    mintedSudtCellIndexes.forEach((value, index) => {
-      const amount = utils.readBigUInt128LE(tx.outputsData[value]);
-      const mintId = uint8ArrayToString(new Uint8Array(lockTxHashes.indexAt(index).raw()));
-      const lockTxHash = mintId.split('-')[0];
-      parsedResult.push({ amount: amount, id: mintId, lockTxHash: lockTxHash, lockBlockHeight: blockNumber });
-    });
+    // mintedSudtCellIndexes.forEach((value, index) => {
+    //   const amount = utils.readBigUInt128LE(tx.outputsData[value]);
+    //   const mintId = uint8ArrayToString(new Uint8Array(lockTxHashes.indexAt(index).raw()));
+    //   const lockTxHash = mintId.split('-')[0];
+    //   parsedResult.push({ amount: amount, id: mintId, lockTxHash: lockTxHash, lockBlockHeight: blockNumber });
+    // });
     return { txHash: tx.hash, records: parsedResult };
   }
 
@@ -555,7 +556,7 @@ export class CkbHandler {
         let content1 = serializeMultisigScript(ForceBridgeCore.config.ckb.multisigScript);
         content1 += signatures.join('');
 
-        logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
+        // logger.debug(`txSkeleton: ${transactionSkeletonToJSON(txSkeleton)}`);
         const tx = sealTransaction(txSkeleton, [content0, content1]);
         const mintTxHash = await this.rpc.sendTransaction(tx, 'passthrough');
         logger.info(

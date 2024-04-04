@@ -20,7 +20,7 @@ pub fn get_sudt_amount_from_source(source: Source, force_bridge_lock_hash: &[u8]
                 }
 
                 let data = load_cell_data(index, source)
-                    .expect("laod cell data fail");
+                    .expect("load cell data fail");
                 let mut buf = [0u8; UDT_LEN];
                 if data.len() < UDT_LEN {
                     panic!("invalid sudt cell. index: {}, source: {:?}", index, source);

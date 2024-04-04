@@ -186,6 +186,12 @@ export class SolAsset extends Asset {
       chain: this.chainType,
       asset: fromHexString(toHexString(stringToUint8Array(this.address))).buffer,
     };
+
+    console.log("=========================================================")
+    console.log(this.address)
+    console.log(params)
+    console.log("=========================================================")
+
     return `0x${toHexString(new Uint8Array(SerializeForceBridgeLockscriptArgs(params)))}`;
   }
 

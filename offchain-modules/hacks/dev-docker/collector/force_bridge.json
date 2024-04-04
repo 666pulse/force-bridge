@@ -3,7 +3,7 @@
     "common": {
       "log": {
         "level": "debug",
-        "logFile": "/home/wetee/work/wetee/force-bridge/offchain-modules/tmp/dev-docker/collector/force_bridge.log"
+        "logFile": "/home/wetee/work/wetee/force-bridge/offchain-modules/hacks/dev-docker/collector/force_bridge.log"
       },
       "lumosConfigType": "AGGRON4",
       "network": "testnet",
@@ -24,7 +24,7 @@
         "0xca558de4535b228abf5004b9796b1bcb7ab92f8a"
       ],
       "port": 38000,
-      "keystorePath": "/home/wetee/work/wetee/force-bridge/offchain-modules/tmp/dev-docker/collector/keystore.json"
+      "keystorePath": "/home/wetee/work/wetee/force-bridge/offchain-modules/hacks/dev-docker/collector/keystore.json"
     },
     "eth": {
       "rpcUrl": "http://127.0.0.1:8545",
@@ -184,6 +184,12 @@
           "host": "http://127.0.0.1:38001/force-bridge/sign-server/api/v1"
         }
       ]
+    },
+    "sol":{
+      "rpcUrl":"https://devnet.helius-rpc.com/?api-key=4327eb86-4e9f-4126-bad7-cdc60699afdb",
+      "contractAddress":"B2bYAPkQwmsuAnpyx4Efe3YR1FwKw4ApdxBW5rSSh7NQ",
+      "bridgerAccount":[],
+      "privateKey":[]
     },
     "collector": {
       "gasLimit": 250000,

@@ -574,7 +574,7 @@ function getTokenShadowIdent(XChainNetwork: XChainNetWork, XChainToken: string):
       asset = new BtcAsset('btc', ownerTypeHash);
       break;
     case 'SOL':
-      asset = new SolAsset(XChainToken, ownerTypeHash);
+      asset = new SolAsset("SOL", ownerTypeHash);
       break;
     case 'Ethereum':
       asset = new EthAsset(XChainToken, ownerTypeHash);

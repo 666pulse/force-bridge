@@ -12,6 +12,7 @@ function assertArrayBuffer(reader) {
   if (reader instanceof Object && reader.toArrayBuffer instanceof Function) {
     reader = reader.toArrayBuffer();
   }
+  console.log(reader)
   if (!(reader instanceof ArrayBuffer)) {
     throw new Error('Provided value must be an ArrayBuffer or can be transformed into ArrayBuffer!');
   }

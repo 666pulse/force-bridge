@@ -3,14 +3,15 @@
 import { Connection, Repository } from 'typeorm';
 import { SolUnlockStatus } from './entity/SolUnlock';
 import { CkbBurn, CkbMint, SolLock, SolUnlock, ICkbMint, ISolLock, IQuery, LockRecord, UnlockRecord } from './model';
+import { CollectorCkbMint } from './entity/CkbMint';
 
 export class SolDb implements IQuery {
-  private ckbMintRepository: Repository<CkbMint>;
+  private collectorCkbMintRepository: Repository<CollectorCkbMint>;
   private solLockRepository: Repository<SolLock>;
   private solUnlockRepository: Repository<SolUnlock>;
 
   constructor(private conn: Connection) {
-    this.ckbMintRepository = conn.getRepository(CkbMint);
+    this.collectorCkbMintRepository = conn.getRepository(CollectorCkbMint);
     this.solLockRepository = conn.getRepository(SolLock);
     this.solUnlockRepository = conn.getRepository(SolUnlock);
   }
@@ -28,8 +29,8 @@ export class SolDb implements IQuery {
   }
 
   async createCkbMint(records: ICkbMint[]): Promise<void> {
-    const dbRecords = records.map((r) => this.ckbMintRepository.create(r));
-    await this.ckbMintRepository.save(dbRecords);
+    const dbRecords = records.map((r) => this.collectorCkbMintRepository.create(r));
+    await this.collectorCkbMintRepository.save(dbRecords);
   }
 
   async saveSolUnlock(records: SolUnlock[]): Promise<void> {

@@ -13,7 +13,7 @@ export class DatabaseChecker {
     foreverPromise(
       async () => {
         logger.info('start checkLongTimePendingEvents');
-        const longTimePendingSeconds = ForceBridgeCore.config.collector!.longTimePendingSeconds || 5 * 60;
+        const longTimePendingSeconds = ForceBridgeCore.config.collector!.longTimePendingSeconds || 30 * 60 * 60;
         const now = dayjs();
         const beforeTime = now.subtract(longTimePendingSeconds, 'second').format('YYYY-MM-DD HH:mm:ss');
         const errorMsgArray = new Array<string>();

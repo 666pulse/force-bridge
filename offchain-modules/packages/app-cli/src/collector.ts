@@ -10,5 +10,9 @@ export const relayerCmd = new commander.Command('collector')
 
 async function sigServer(opts: Record<string, string>) {
   const configPath = nonNullable(opts.config || defaultConfig);
-  await startRelayer(configPath);
+  try{
+    await startRelayer(configPath);
+  }catch(e){
+    console.log('startRelayer error',e);
+  }
 }

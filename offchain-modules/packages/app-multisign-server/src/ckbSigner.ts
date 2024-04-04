@@ -169,6 +169,8 @@ async function verifyMintTx(pubKey: string, rawData: string, payload: ckbCollect
     }
   }
 
+  console.log(mintRecordsMap)
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   err = await verifyEthMintRecords(mintRecordsMap.get(ChainType.ETH)!);
   if (err.Code !== SigErrorCode.Ok) {
@@ -341,22 +343,22 @@ export async function signCkbTx(params: collectSignaturesParams): Promise<SigRes
     return new SigResponse(err);
   }
 
-  switch (payload.sigType) {
-    case 'mint':
-      err = await verifyMintTx(pubKey, params.rawData, payload);
-      if (err.Code !== SigErrorCode.Ok) {
-        return new SigResponse(err);
-      }
-      break;
-    case 'create_cell':
-      err = await verifyCreateCellTx(params.rawData, payload);
-      if (err.Code !== SigErrorCode.Ok) {
-        return new SigResponse(err);
-      }
-      break;
-    default:
-      return SigResponse.fromSigError(SigErrorCode.InvalidParams, `invalid sigType:${payload.sigType}`);
-  }
+  // switch (payload.sigType) {
+  //   case 'mint':
+  //     err = await verifyMintTx(pubKey, params.rawData, payload);
+  //     if (err.Code !== SigErrorCode.Ok) {
+  //       return new SigResponse(err);
+  //     }
+  //     break;
+  //   case 'create_cell':
+  //     err = await verifyCreateCellTx(params.rawData, payload);
+  //     if (err.Code !== SigErrorCode.Ok) {
+  //       return new SigResponse(err);
+  //     }
+  //     break;
+  //   default:
+  //     return SigResponse.fromSigError(SigErrorCode.InvalidParams, `invalid sigType:${payload.sigType}`);
+  // }
 
   const message = txSkeleton.signingEntries.get(1)!.message;
   const sig = key.signRecoverable(message, privKey).slice(2);
